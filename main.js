@@ -5,7 +5,7 @@ Office.onReady(function() {
 
     var rng3 = sheet.getUsedRange();
     rng3.load("formulas");
-    alert(JSON.stringify(rng3.formulas, null, 4));
+    alert(JSON.stringify(1, null, 4));
     
     var data2 = [[1, 2]];
     var rng2 = sheet.getRange("A1:B1");
