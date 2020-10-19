@@ -6,6 +6,10 @@ Office.onReady(function() {
   Excel.run(function (context) {
     var sheet = context.workbook.worksheets.getActiveWorksheet();
 
+    var rng3 = sheet.getUsedRange();
+    rng3.load("formulas");
+    alert(rng3);
+    
     var data2 = [[1, 2]];
     var rng2 = sheet.getRange("A1:B1");
     rng2.values = data2;
