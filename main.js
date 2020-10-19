@@ -56,7 +56,7 @@ Office.onReady(function() {
         for(var j = 0; j < f.length; j++) {
           
           
-          if (/^=.*[ =+\-*/!]OutData\(.*\)/i.test(f[j]))) {
+          if (/^=.*[ =+\-*/!]OutData\(.*\)/i.test(f[j])) {
             document.write("f[" + i + "][" + j + "] = " + f[j]);
           }
           
