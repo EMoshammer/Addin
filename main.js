@@ -3,9 +3,8 @@ Office.onReady(function() {
   Excel.run(function (context) {
     var sheet = context.workbook.worksheets.getActiveWorksheet();
     
-    var rng3 = sheet.getUsedRange();
-    //var rng3 = sheet.getRange("B2:E8");
-    rng3.load("formulas");
+    var rng = sheet.getUsedRange();
+    rng.load("formulas");
     
     sheet.getRange("C1").values = [[ 5 ]];
     
@@ -49,10 +48,19 @@ Office.onReady(function() {
     // Display the totals as US dollar amounts.
     //totalRange.numberFormat = [["$0.00"]];
         
-    return context.sync()
-            .then(function () {
-            document.write(JSON.stringify(rng3.formulas, null, 4));
-        });
+    return context.sync().then(function () {
+      document.write(JSON.stringify(rng.formulas, null, 4));
+      
+      var f = rng.formulas;
+      for(var i = 0; i < rng.formulas.length; i++) {
+        var f = rng.formulas[i];
+        for(var j = 0; j < f.length; j++) {
+          display("f[" + i + "][" + j + "] = " + f[j]);
+        }
+      }
+      
+      
+    });
     
   });
 });
