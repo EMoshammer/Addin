@@ -1,6 +1,6 @@
 Office.onReady(function() {
   
-  Excel.run(function (context) {
+  Excel.run(async function (context) {
     var sheet = context.workbook.worksheets.getActiveWorksheet();
     
     //var rng3 = sheet.getUsedRange();
@@ -49,10 +49,10 @@ Office.onReady(function() {
     totalRange.numberFormat = [["$0.00"]];
     
     
-    return context.sync()
-            .then(function () {
-            document.write(JSON.stringify(rng3.formulas, null, 4));
-        });
+    //return context.sync();
+        //    .then(function () {
+       //     document.write(JSON.stringify(rng3.formulas, null, 4));
+      //  });
     
   });
 });
