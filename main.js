@@ -51,8 +51,8 @@ Office.onReady(function() {
     return context.sync().then(function () {
       document.write(JSON.stringify(rng.formulas, null, 4));
       
-      for(var i = 0; i < x.length; i++) {
-        var f = x[i];
+      for(var i = 0; i < rng.formulas.length; i++) {
+        var f = rng.formulas[i];
         for(var j = 0; j < f.length; j++) {
           document.write("f[" + i + "][" + j + "] = " + f[j]);
         }
