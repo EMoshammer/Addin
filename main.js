@@ -1,15 +1,37 @@
+        async function getFormulas() {
+            try {
+                await Excel.run(async (context) => {
+                    const sheet = context.workbook.worksheets.getActiveWorksheet();
+                    // Get the used range in the sheet,
+                    // then load all formulas in that sheet.
+                    const range = sheet.getUsedRange();
+                    range.load("address, formulas");
+                    await context.sync();
+
+                    document.write(JSON.stringify(range.formulas, null, 4));
+                });
+            }
+            catch (error) {
+                OfficeHelpers.UI.notify(error);
+                OfficeHelpers.Utilities.log(error);
+            }
+        }
+
+
 Office.onReady(function() {
   
   Excel.run(function (context) {
     var sheet = context.workbook.worksheets.getActiveWorksheet();
 
+    getFormulas();
+    
     //var rng3 = sheet.getUsedRange();
-    var rng3 = sheet.getRange("B2:E8");
-    rng3.load("values");
+    //var rng3 = sheet.getRange("B2:E8");
+    //rng3.load("values");
     
-    await context.sync();
+   // await context.sync();
     
-   document.write(JSON.stringify(rng3.values, null, 4));
+   //document.write(JSON.stringify(rng3.values, null, 4));
     
     var data2 = [[1, 2]];
     var rng2 = sheet.getRange("A1:B1");
