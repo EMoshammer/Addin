@@ -1,13 +1,12 @@
 Office.onReady(function() {
   
-  Excel.run(async function (context) {
+  Excel.run(function (context) {
     var sheet = context.workbook.worksheets.getActiveWorksheet();
     
     //var rng3 = sheet.getUsedRange();
     var rng3 = sheet.getRange("B2:E8");
     rng3.load("formulas");
     
-   // await context.sync();
     
    //document.write(JSON.stringify(rng3.formulas, null, 4));
     
@@ -47,13 +46,11 @@ Office.onReady(function() {
 
     // Display the totals as US dollar amounts.
     totalRange.numberFormat = [["$0.00"]];
-    
-    await context.sync();
-    
-    //return context.sync();
-        //    .then(function () {
-       //     document.write(JSON.stringify(rng3.formulas, null, 4));
-      //  });
+        
+    return context.sync()
+            .then(function () {
+            document.write(JSON.stringify(1, null, 4));
+        });
     
   });
 });
