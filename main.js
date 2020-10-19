@@ -2,12 +2,10 @@ Office.onReady(function() {
   
   Excel.run(function (context) {
     var sheet = context.workbook.worksheets.getActiveWorksheet();
-
-    getFormulas();
     
     //var rng3 = sheet.getUsedRange();
     var rng3 = sheet.getRange("B2:E8");
-    //rng3.load("values");
+    rng3.load("formulas");
     
    // await context.sync();
     
