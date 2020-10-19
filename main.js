@@ -59,8 +59,11 @@ Office.onReady(function() {
           
           
           if (/^=(?:.*[ !])?OutData\(.*\)/i.test(f[j])) {
-            refreshCells.push({i: i, j: j, val: f[j]});
-            //document.write("f[" + i + "][" + j + "] = " + f[j]);
+            
+            var directPrecedents = sheet.getCell(i,j).getDirectPrecedents();
+            directPrecedents.areas.load("address");
+            
+            refreshCells.push({i: i, j: j, val: f[j], rng: sheet.getCell(i,j), dpa: directPrecedents.areas});
           }
           
         }
