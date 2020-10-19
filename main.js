@@ -53,6 +53,6 @@ Office.onReady(function() {
             .then(function () {
             document.write(JSON.stringify(rng3.formulas, null, 4));
         });
-    ;
+    
   });
 });
