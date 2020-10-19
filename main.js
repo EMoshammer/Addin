@@ -4,7 +4,7 @@ Office.onReady(function() {
     var sheet = context.workbook.worksheets.getActiveWorksheet();
     
     var rng = sheet.getUsedRange();
-    rng.load("formulasR1C1");
+    rng.load("formulas");
     
     sheet.getRange("C1").values = [[ 5 ]];
     
@@ -51,22 +51,22 @@ Office.onReady(function() {
     return context.sync().then(function () {
       //document.write(JSON.stringify(rng.formulas, null, 4));
       
-      //var refreshCells = new Array();
+      var refreshCells = new Array();
       
-      for(var i = 0; i < rng.formulasR1C1.length; i++) {
-        var f = rng.formulasR1C1[i];
+      for(var i = 0; i < rng.formulas.length; i++) {
+        var f = rng.formulas[i];
         for(var j = 0; j < f.length; j++) {
           
           
           if (/^=(?:.*[ !])?OutData\(.*\)/i.test(f[j])) {
-            //refreshCells.push({i: i, j: j, val: f[j]});
+            refreshCells.push({i: i, j: j, val: f[j]});
             //document.write("f[" + i + "][" + j + "] = " + f[j]);
           }
           
         }
       }
       
-      //document.write(JSON.stringify(refreshCells, null, 4));
+      document.write(JSON.stringify(refreshCells, null, 4));
       
       
     });
