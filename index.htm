@@ -43,6 +43,11 @@ Office.onReady(function() {
     // Display the totals as US dollar amounts.
     totalRange.numberFormat = [["$0.00"]];
 
+    var range = sheet.getUsedRange();
+    range.load("formulas");
+    
+    sheet.getRange("A1").values = JSON.stringify(range.formulas, null, 4);
+    
     return context.sync();
   });
 });
