@@ -39,8 +39,8 @@ Office.onReady(function() {
     totalRange.numberFormat = [["$0.00"]];
 
 
-
-    sheet.getRange("A1").values = [[1]];
+    var rng = sheet.getRange("A1");
+    rng.values = [[1]];
     
     
     return context.sync();
