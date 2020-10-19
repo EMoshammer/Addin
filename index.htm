@@ -38,9 +38,9 @@ Office.onReady(function() {
     // Display the totals as US dollar amounts.
     totalRange.numberFormat = [["$0.00"]];
     
-    var data = [[1]];
-    var rng = sheet.getRange("A1:A1");
-    rng.values = data;
+    var data2 = [[1, 2]];
+    var rng2 = sheet.getRange("A1:B1");
+    rng2.values = data2;
     
     
     return context.sync();
