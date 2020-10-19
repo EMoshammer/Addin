@@ -51,7 +51,7 @@ Office.onReady(function() {
     return context.sync().then(function () {
       //document.write(JSON.stringify(rng.formulas, null, 4));
       
-      var refreshCells = new Array();
+      //var refreshCells = new Array();
       
       for(var i = 0; i < rng.formulasR1C1.length; i++) {
         var f = rng.formulasR1C1[i];
@@ -66,7 +66,7 @@ Office.onReady(function() {
         }
       }
       
-      document.write(JSON.stringify(refreshCells, null, 4));
+      //document.write(JSON.stringify(refreshCells, null, 4));
       
       
     });
