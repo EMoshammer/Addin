@@ -76,7 +76,7 @@ Office.onReady(function() {
     .then(context.sync)
     .then(function () {
       for (var i = 0; i < refreshCells.length; i++) {
-        sheet.getCell(refreshCells[i]['i'],refreshCells[i]['j']).load('address');
+        refreshCells[i]['abc'] = sheet.getCell(refreshCells[i]['i'],refreshCells[i]['j']);
       }
     })
     .then(context.sync)
