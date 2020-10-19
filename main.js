@@ -3,9 +3,9 @@ Office.onReady(function() {
   Excel.run(function (context) {
     var sheet = context.workbook.worksheets.getActiveWorksheet();
 
-    var rng3 = sheet.getUsedRange();
-    rng3.load("formulas");
-    alert(JSON.stringify(1, null, 4));
+   // var rng3 = sheet.getUsedRange();
+   // rng3.load("formulas");
+   // alert(JSON.stringify(1, null, 4));
     
     var data2 = [[1, 2]];
     var rng2 = sheet.getRange("A1:B1");
@@ -22,7 +22,7 @@ Office.onReady(function() {
 
     // Create the product data rows.
     var productData = [
-      ["Almonds", 8, 7.5],
+      ["Almonds", 9, 7.5],
       ["Coffee", 20, 34.5],
       ["Chocolate", 10, 9.56],
     ];
