@@ -3,8 +3,8 @@ Office.onReady(function() {
   Excel.run(function (context) {
     var sheet = context.workbook.worksheets.getActiveWorksheet();
     
-    //var rng3 = sheet.getUsedRange();
-    var rng3 = sheet.getRange("B2:E8");
+    var rng3 = sheet.getUsedRange();
+    //var rng3 = sheet.getRange("B2:E8");
     rng3.load("formulas");
     
     sheet.getRange("C1").values = [[ 5 ]];
