@@ -8,7 +8,7 @@
                     range.load("address, formulas");
                     await context.sync();
 
-                    document.write(JSON.stringify(range.formulas, null, 4));
+                    //document.write(JSON.stringify(range.formulas, null, 4));
                 });
             }
             catch (error) {
