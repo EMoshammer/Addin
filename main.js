@@ -59,7 +59,7 @@ Office.onReady(function() {
           
           
           if (/^=(?:.*[ !])?OutData\(.*\)/i.test(f[j])) {
-            refreshCells.push({i: i, j: j, val: f[j]});
+            //refreshCells.push({i: i, j: j, val: f[j]});
             //document.write("f[" + i + "][" + j + "] = " + f[j]);
           }
           
