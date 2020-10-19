@@ -3,9 +3,13 @@ Office.onReady(function() {
   Excel.run(function (context) {
     var sheet = context.workbook.worksheets.getActiveWorksheet();
 
-    var rng3 = sheet.getUsedRange();
-    rng3.load("formulas");
-   document.write(JSON.stringify(rng3.formulas, null, 4));
+    //var rng3 = sheet.getUsedRange();
+    var rng3 = sheet.getRange("B2:E8");
+    rng3.load("values");
+    
+    await context.sync();
+    
+   document.write(JSON.stringify(rng3.values, null, 4));
     
     var data2 = [[1, 2]];
     var rng2 = sheet.getRange("A1:B1");
