@@ -48,10 +48,10 @@ Office.onReady(function() {
     // Display the totals as US dollar amounts.
     //totalRange.numberFormat = [["$0.00"]];
         
+    var refreshCells = new Array();
+    
     return context.sync().then(function () {
       //document.write(JSON.stringify(rng.formulas, null, 4));
-      
-      var refreshCells = new Array();
       
       for(var i = 0; i < rng.formulas.length; i++) {
         var f = rng.formulas[i];
@@ -63,7 +63,7 @@ Office.onReady(function() {
             //var directPrecedents = sheet.getCell(i,j).getDirectPrecedents();
             //directPrecedents.areas.load("address");
             
-            //refreshCells.push({i: i, j: j, val: f[j], rng: sheet.getCell(i,j), dpa: directPrecedents.areas});
+            refreshCells.push({i: i, j: j, val: f[j], rng: sheet.getCell(i,j)}); //, dpa: directPrecedents.areas});
           }
           
         }
@@ -80,8 +80,8 @@ Office.onReady(function() {
     })
     .then(context.sync)
     .then(function () {
-        //document.write(JSON.stringify(refreshCells, null, 4));
-        document.write(JSON.stringify(2, null, 4));
+        document.write(JSON.stringify(refreshCells, null, 4));
+        //document.write(JSON.stringify(2, null, 4));
       });
     
   });
