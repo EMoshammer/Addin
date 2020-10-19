@@ -75,7 +75,8 @@ Office.onReady(function() {
         document.write(JSON.stringify(refreshCells, null, 4));
       });
       
-    });
+    })
+    .then(context.sync);
     
   });
 });
