@@ -38,6 +38,11 @@ Office.onReady(function() {
     // Display the totals as US dollar amounts.
     totalRange.numberFormat = [["$0.00"]];
 
+
+
+    sheet.getRange("A1").values = [[1]];
+    
+    
     return context.sync();
   });
 });
