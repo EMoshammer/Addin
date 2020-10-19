@@ -9,7 +9,7 @@ Office.onReady(function() {
     
    // await context.sync();
     
-   //document.write(JSON.stringify(rng3.values, null, 4));
+   //document.write(JSON.stringify(rng3.formulas, null, 4));
     
     var data2 = [[1, 2]];
     var rng2 = sheet.getRange("A1:B1");
@@ -49,6 +49,10 @@ Office.onReady(function() {
     totalRange.numberFormat = [["$0.00"]];
     
     
-    return context.sync();
+    return context.sync()
+            .then(function () {
+            document.write(JSON.stringify(rng3.formulas, null, 4));
+        });
+    ;
   });
 });
