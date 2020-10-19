@@ -73,7 +73,8 @@ Office.onReady(function() {
       
       return context.sync().then(function () {
         document.write(JSON.stringify(refreshCells, null, 4));
-      });
+      })    
+      .then(context.sync);
       
     })
     .then(context.sync);
