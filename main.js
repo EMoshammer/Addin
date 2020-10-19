@@ -54,7 +54,12 @@ Office.onReady(function() {
       for(var i = 0; i < rng.formulas.length; i++) {
         var f = rng.formulas[i];
         for(var j = 0; j < f.length; j++) {
-          document.write("f[" + i + "][" + j + "] = " + f[j]);
+          
+          
+          if (/^=.*[ =+\-*/!]OutData\(.*\)/i.test(f[j]))) {
+            document.write("f[" + i + "][" + j + "] = " + f[j]);
+          }
+          
         }
       }
       
