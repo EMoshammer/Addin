@@ -71,7 +71,6 @@ Office.onReady(function() {
       
       document.write(JSON.stringify(1, null, 4));
       
-      return context.sync();
       //return context.sync().then(function () {
         //document.write(JSON.stringify(refreshCells, null, 4));
       //  document.write(JSON.stringify(2, null, 4));
@@ -79,6 +78,7 @@ Office.onReady(function() {
       //.then(context.sync);
       
     })
+    .then(context.sync)
     .then(function () {
         //document.write(JSON.stringify(refreshCells, null, 4));
         document.write(JSON.stringify(2, null, 4));
