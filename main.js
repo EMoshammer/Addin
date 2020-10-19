@@ -51,7 +51,7 @@ Office.onReady(function() {
         
     return context.sync()
             .then(function () {
-            document.write(JSON.stringify(1, null, 4));
+            document.write(JSON.stringify(rng3.formulas, null, 4));
         });
     
   });
