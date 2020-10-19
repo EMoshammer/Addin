@@ -7,6 +7,8 @@ Office.onReady(function() {
     var rng3 = sheet.getRange("B2:E8");
     rng3.load("formulas");
     
+    sheet.getRange("C1").values = [[ 5 ]];
+    
     
    //document.write(JSON.stringify(rng3.formulas, null, 4));
     
