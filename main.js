@@ -85,4 +85,6 @@ Office.onReady(function() {
       });
     
   });
+}).catch(function(error) {
+    document.write("Error: " + error);
 });
