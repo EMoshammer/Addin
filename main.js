@@ -49,6 +49,7 @@ Office.onReady(function() {
     //totalRange.numberFormat = [["$0.00"]];
         
     var refreshCells = new Array();
+    var refreshCells2 = new Array();
     
     return context.sync().then(function () {
       //document.write(JSON.stringify(rng.formulas, null, 4));
@@ -76,7 +77,7 @@ Office.onReady(function() {
     .then(context.sync)
     .then(function () {
       for (var i = 0; i < refreshCells.length; i++) {
-        refreshCells[i]['abc'] = sheet.getCell(refreshCells[i]['i'],refreshCells[i]['j']);
+        refreshCells2.push(sheet.getCell(refreshCells[i]['i'],refreshCells[i]['j']));
       }
     })
     .then(context.sync)
