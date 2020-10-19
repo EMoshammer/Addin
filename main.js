@@ -47,7 +47,7 @@ Office.onReady(function() {
     totalRange.format.font.bold = true;
 
     // Display the totals as US dollar amounts.
-    totalRange.numberFormat = [["$0.00"]];
+    //totalRange.numberFormat = [["$0.00"]];
         
     return context.sync()
             .then(function () {
