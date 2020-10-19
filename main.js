@@ -64,7 +64,7 @@ Office.onReady(function() {
             //var directPrecedents = sheet.getCell(i,j).getDirectPrecedents();
             //directPrecedents.areas.load("address");
             
-            refreshCells.push({i: i, j: j, val: f[j], rng: rng.getCell(i,j)}); //, rng: sheet.getCell(i,j), dpa: directPrecedents.areas});
+            refreshCells.push({i: i, j: j, val: f[j]}); //, rng: sheet.getCell(i,j), dpa: directPrecedents.areas});
           }
           
         }
@@ -72,15 +72,17 @@ Office.onReady(function() {
       
       document.write(JSON.stringify(1, null, 4));
       
-      //return context.sync().then(function () {
-        //document.write(JSON.stringify(refreshCells, null, 4));
-      //  document.write(JSON.stringify(2, null, 4));
-      //})    
-      //.then(context.sync);
-      
     })
     .then(context.sync)
     .then(function () {
+        document.write(JSON.stringify(refreshCells, null, 4));
+    .then(context.sync)
+    .then(function () {
+      
+      for (var i = 0; i < refreshCells.length; i++) {
+        refreshCells[i]['abc'] = '1';
+      }
+      
         document.write(JSON.stringify(refreshCells, null, 4));
         //document.write(JSON.stringify(2, null, 4));
       });
