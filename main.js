@@ -61,7 +61,7 @@ Office.onReady(function() {
           
           if (/^=(?:.*[ !])?OutData\(.*\)/i.test(f[j])) {
             
-            var c = sheet.getRange('R'+i+'C'+j);
+            var c = sheet.getRange("A1");
             c.load('address');
             refreshCells2.push(c);
             //var directPrecedents = sheet.getCell(i,j).getDirectPrecedents();
