@@ -57,7 +57,7 @@ Office.onReady(function() {
     return context.sync().then(function () {
       //document.write(JSON.stringify(rng.formulas, null, 4));
       
-//var cell = rng.getCell(3,3);
+var cell = rng.getCell(3,3);
       
       for(var i = 0; i < rng.formulas.length; i++) {
         var f = rng.formulas[i];
