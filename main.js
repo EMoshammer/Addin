@@ -90,8 +90,8 @@ Office.onReady(function() {
     .then(function () {
       
       sheet.getCell(0,0).formulas = [[ "=B2" ]];
-      cell = rng.getCell(0,0);
-      cell.load('values');
+      //cell = rng.getCell(0,0);
+      //cell.load('values');
       
       for (var i = 0; i < refreshCells.length; i++) {
         //var c = rng.getCell(refreshCells[i]['i'],refreshCells[i]['j']);
@@ -105,7 +105,7 @@ Office.onReady(function() {
         refreshCells[i]['abc'] = '1';
       }
       
-        sheet.getCell(0,0).values = sheet.getCell(0,0).values;
+        //sheet.getCell(0,0).values = sheet.getCell(0,0).values;
       
         document.write(JSON.stringify(refreshCells, null, 4));
         //document.write(JSON.stringify(2, null, 4));
