@@ -51,11 +51,13 @@ Office.onReady(function() {
     var refreshCells = new Array();
     var refreshCells2 = new Array();
     var cell;
-    
+
       //var cell = rng.getCell(3,3);
       //cell.load('address');
     
     return context.sync().then(function () {
+      
+      rng.getCell(0,0).formulas = [[ "=B2" ]];
       
       //cell = rng.getCell(3,3);
       //cell.load('address');
@@ -89,7 +91,6 @@ Office.onReady(function() {
     .then(context.sync)
     .then(function () {
       
-      sheet.getCell(0,0).formulas = [[ "=B2" ]];
       //cell = rng.getCell(0,0);
       //cell.load('values');
       
