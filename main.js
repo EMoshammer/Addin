@@ -51,11 +51,13 @@ Office.onReady(function() {
     var refreshCells = new Array();
     var refreshCells2 = new Array();
     
+      var cell = sheet.getCell(3,3);
+      cell.load('address');
+    
     return context.sync().then(function () {
       //document.write(JSON.stringify(rng.formulas, null, 4));
       
-      var cell = sheet.getCell(3,3);
-      cell.load('address');
+
       
       for(var i = 0; i < rng.formulas.length; i++) {
         var f = rng.formulas[i];
