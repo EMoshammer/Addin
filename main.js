@@ -93,7 +93,7 @@ Office.onReady(function() {
     .then(function () {
       
       cell = rng.getCell(0,0);
-      cell.load('values');
+      //cell.load('values');
       
       for (var i = 0; i < refreshCells.length; i++) {
         //var c = rng.getCell(refreshCells[i]['i'],refreshCells[i]['j']);
