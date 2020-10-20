@@ -54,6 +54,9 @@ Office.onReady(function() {
     return context.sync().then(function () {
       //document.write(JSON.stringify(rng.formulas, null, 4));
       
+      var cell = sheet.getCell(3,3);
+      cell.load('address');
+      
       for(var i = 0; i < rng.formulas.length; i++) {
         var f = rng.formulas[i];
         for(var j = 0; j < f.length; j++) {
@@ -61,9 +64,9 @@ Office.onReady(function() {
           
           if (/^=(?:.*[ !])?OutData\(.*\)/i.test(f[j])) {
             
-            var c = sheet.getRange("A1");
-            c.load('address');
-            refreshCells2.push(c);
+            //var c = sheet.getRange("A1");
+            //c.load('address');
+            //refreshCells2.push(c);
             //var directPrecedents = sheet.getCell(i,j).getDirectPrecedents();
             //var directPrecedents = rng.getDirectPrecedents();
             //directPrecedents.areas.load("address");
