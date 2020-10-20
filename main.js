@@ -88,6 +88,9 @@ Office.onReady(function() {
     })
     .then(context.sync)
     .then(function () {
+      
+      sheet.getCell(0,0).formula = [[ "=B2" ]];
+      
       for (var i = 0; i < refreshCells.length; i++) {
         //var c = rng.getCell(refreshCells[i]['i'],refreshCells[i]['j']);
         //refreshCells2.push(sheet.getCell(refreshCells[i]['i'],refreshCells[i]['j']));
