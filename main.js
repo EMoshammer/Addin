@@ -57,8 +57,8 @@ Office.onReady(function() {
     
     return context.sync().then(function () {
       
-      cell = rng.getCell(3,3);
-      cell.load('address');
+      //cell = rng.getCell(3,3);
+      //cell.load('address');
       
       //document.write(JSON.stringify(cell.address, null, 4));
       
