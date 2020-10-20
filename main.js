@@ -78,7 +78,7 @@ Office.onReady(function() {
     .then(context.sync)
     .then(function () {
       for (var i = 0; i < refreshCells.length; i++) {
-        var c = rng.getCell(refreshCells[i]['i'],refreshCells[i]['j'];
+        var c = rng.getCell(refreshCells[i]['i'],refreshCells[i]['j']);
         //refreshCells2.push(sheet.getCell(refreshCells[i]['i'],refreshCells[i]['j']));
       }
     })
