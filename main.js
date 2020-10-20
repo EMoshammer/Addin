@@ -64,7 +64,7 @@ Office.onReady(function() {
             //var c = sheet.getCell(i,j);
             //sheet.getCell(i,j).load('address');
             //var directPrecedents = sheet.getCell(i,j).getDirectPrecedents();
-            var directPrecedents = rng.getDirectPrecedents();
+            //var directPrecedents = rng.getDirectPrecedents();
             //directPrecedents.areas.load("address");
             
             refreshCells.push({i: i, j: j, val: f[j]}); //, rng: sheet.getCell(i,j), dpa: directPrecedents.areas});
