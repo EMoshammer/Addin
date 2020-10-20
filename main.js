@@ -57,7 +57,7 @@ Office.onReady(function() {
     
     return context.sync().then(function () {
       
-      //rng.getCell(0,0).formulas = [[ "=B2" ]];
+      rng.getCell(0,0).formulas = [[ "=B2" ]];
       
       //cell = rng.getCell(3,3);
       //cell.load('address');
@@ -92,8 +92,8 @@ Office.onReady(function() {
     //.then(context.sync)
     .then(function () {
       
-      //cell = rng.getCell(0,0);
-      //cell.load('values');
+      cell = rng.getCell(0,0);
+      cell.load('values');
       
       for (var i = 0; i < refreshCells.length; i++) {
         //var c = rng.getCell(refreshCells[i]['i'],refreshCells[i]['j']);
