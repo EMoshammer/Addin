@@ -50,13 +50,14 @@ Office.onReady(function() {
         
     var refreshCells = new Array();
     var refreshCells2 = new Array();
+    var cell;
     
       //var cell = rng.getCell(3,3);
       //cell.load('address');
     
     return context.sync().then(function () {
       
-      var cell = rng.getCell(3,3);
+      cell = rng.getCell(3,3);
       cell.load('address');
       
       //document.write(JSON.stringify(cell.address, null, 4));
@@ -84,10 +85,8 @@ Office.onReady(function() {
       
       document.write(JSON.stringify(1, null, 4));
       
-      return context.sync();
-      
     })
-    //.then(context.sync)
+    .then(context.sync)
     .then(function () {
       for (var i = 0; i < refreshCells.length; i++) {
         //var c = rng.getCell(refreshCells[i]['i'],refreshCells[i]['j']);
