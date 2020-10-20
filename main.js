@@ -92,7 +92,7 @@ Office.onReady(function() {
     //.then(context.sync)
     .then(function () {
       
-      cell = sheet.getCell(0,0);
+      //cell = sheet.getCell(0,0);
       //cell.load('values');
       
       for (var i = 0; i < refreshCells.length; i++) {
