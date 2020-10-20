@@ -116,5 +116,7 @@ Office.onReady(function() {
       });
     
     return context.sync();
+  }).catch(function(error) {
+    document.write("Error: " + error);
   });
 });
