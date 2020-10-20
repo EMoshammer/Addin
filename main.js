@@ -57,7 +57,7 @@ Office.onReady(function() {
     
     return context.sync().then(function () {
       
-      rng.getCell(0,0).formulas = [[ "=B2" ]];
+      //rng.getCell(0,0).formulas = [[ "=B2" ]];
       
       //cell = rng.getCell(3,3);
       //cell.load('address');
