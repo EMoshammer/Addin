@@ -63,11 +63,12 @@ Office.onReady(function() {
             
             var c = rng.getCell(i,j);
             c.load('address');
+            refreshCells2.push(c);
             //var directPrecedents = sheet.getCell(i,j).getDirectPrecedents();
             //var directPrecedents = rng.getDirectPrecedents();
             //directPrecedents.areas.load("address");
             
-            refreshCells.push({i: i, j: j, val: f[j], r: c}); //, rng: sheet.getCell(i,j), dpa: directPrecedents.areas});
+            refreshCells.push({i: i, j: j, val: f[j]}); //, rng: sheet.getCell(i,j), dpa: directPrecedents.areas});
           }
           
         }
