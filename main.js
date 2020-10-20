@@ -87,8 +87,9 @@ Office.onReady(function() {
       
       document.write(JSON.stringify(1, null, 4));
       
+      return context.sync();
     })
-    .then(context.sync)
+    //.then(context.sync)
     .then(function () {
       
       //cell = rng.getCell(0,0);
@@ -98,8 +99,10 @@ Office.onReady(function() {
         //var c = rng.getCell(refreshCells[i]['i'],refreshCells[i]['j']);
         //refreshCells2.push(sheet.getCell(refreshCells[i]['i'],refreshCells[i]['j']));
       }
+      
+      return context.sync();
     })
-    .then(context.sync)
+    //.then(context.sync)
     .then(function () {
       
       for (var i = 0; i < refreshCells.length; i++) {
@@ -112,5 +115,6 @@ Office.onReady(function() {
         //document.write(JSON.stringify(2, null, 4));
       });
     
+    return context.sync();
   });
 });
