@@ -4,7 +4,7 @@ Office.onReady(function() {
     var sheet = context.workbook.worksheets.getActiveWorksheet();
     
     var rng = sheet.getUsedRange();
-    rng.load("formulas, address");
+    rng.load("formulas");
     
     sheet.getRange("B2").values = [[ 5 ]];
     
@@ -18,7 +18,7 @@ Office.onReady(function() {
     
     return context.sync().then(function () {
       
-      sheet.getCell(0,0).formulas = [[ "=B2" ]];
+      rng.getCell(0,0).formulas = [[ "=B2" ]];
       
       //cell = rng.getCell(3,3);
       //cell.load('address');
@@ -46,7 +46,7 @@ Office.onReady(function() {
         }
       }
       
-      document.write(1);
+      document.write("1 ");
       
       return context.sync();
     })
