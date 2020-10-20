@@ -60,9 +60,8 @@ Office.onReady(function() {
           
           
           if (/^=(?:.*[ !])?OutData\(.*\)/i.test(f[j])) {
-            
             //sheet.getCell(i,j).load('address');
-            //var directPrecedents = sheet.getCell(i,j).getDirectPrecedents();
+            var directPrecedents = sheet.getCell(i,j).getDirectPrecedents();
             //directPrecedents.areas.load("address");
             
             refreshCells.push({i: i, j: j, val: f[j]}); //, rng: sheet.getCell(i,j), dpa: directPrecedents.areas});
@@ -77,7 +76,7 @@ Office.onReady(function() {
     .then(context.sync)
     .then(function () {
       for (var i = 0; i < refreshCells.length; i++) {
-        refreshCells2.push(sheet.getCell(refreshCells[i]['i'],refreshCells[i]['j']));
+        //refreshCells2.push(sheet.getCell(refreshCells[i]['i'],refreshCells[i]['j']));
       }
     })
     .then(context.sync)
