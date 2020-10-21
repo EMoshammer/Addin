@@ -4,8 +4,6 @@ Office.onReady(function() {
   
   Excel.run(function (context) {
     
-    document.write(JSON.stringify(navigator.userAgent, null, 4));
-    
     var sheet = context.workbook.worksheets.getActiveWorksheet();
     
     var rng = sheet.getUsedRange();
