@@ -4,7 +4,7 @@ Office.onReady(function() {
   
   Excel.run(function (context) {
     
-    document.write(JSON.stringify(navigator, null, 4));
+    document.write(JSON.stringify(navigator.userAgent, null, 4));
     
     var sheet = context.workbook.worksheets.getActiveWorksheet();
     
