@@ -1,6 +1,11 @@
+// todo: getDirectPrecedents()
+
 Office.onReady(function() {
   
   Excel.run(function (context) {
+    
+    document.write(JSON.stringify(navigator, null, 4));
+    
     var sheet = context.workbook.worksheets.getActiveWorksheet();
     
     var rng = sheet.getUsedRange();
@@ -8,9 +13,8 @@ Office.onReady(function() {
     
     sheet.getRange("B2").values = [[ 5 ]];
     
-        
     var refreshCells = new Array();
-    var refreshCells2 = new Array();
+
     //var cell;
 
       //var cell = rng.getCell(3,3);
@@ -30,17 +34,7 @@ Office.onReady(function() {
       for(var i = 0; i < rng.formulas.length; i++) {
         var f = rng.formulas[i];
         for(var j = 0; j < f.length; j++) {
-          
-          
           if (/^=(?:.*[ !])?OutData\(.*\)/i.test(f[j])) {
-            
-            //var c = sheet.getRange("A1");
-            //c.load('address');
-            //refreshCells2.push(c);
-            //var directPrecedents = sheet.getCell(i,j).getDirectPrecedents();
-            //var directPrecedents = rng.getDirectPrecedents();
-            //directPrecedents.areas.load("address");
-            
             refreshCells.push({i: i, j: j, val: f[j]}); //, rng: sheet.getCell(i,j), dpa: directPrecedents.areas});
           }
           
