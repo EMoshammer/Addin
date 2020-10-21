@@ -1,4 +1,7 @@
 // todo: getDirectPrecedents()
+//https://github.com/handsontable/formula-parser
+//https://github.com/formulajs/formulajs
+//https://stackoverflow.com/questions/64464114/excel-function-parsing-in-office-js
 
 Office.onReady(function() {
   
