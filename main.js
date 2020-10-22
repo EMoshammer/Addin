@@ -69,15 +69,22 @@ Office.onReady(function() {
     
     return context.sync().then(function () {
       
-	    var OutData_regex = /^=(?:.*[ \+\-\*\/!])?OutData\((.*)$/i;
+      var OutData_regex = /^=(?:.*[ \+\-\*\/!])?OutData\((.*)$/i;
       
-      for(var i = 0; i < rng.formulas.length; i++) {
+      for(var i=0; i < rng.formulas.length; i++) {
         var rng_slice = rng.formulas[i];
         for(var j = 0; j < rng_slice.length; j++) {
-		      if (OutData_regex.test(rng_slice[j])) {
-			      var mtch = rng_slice[j].match(OutData_regex);
-			      refreshCells2.push({i: i, j: j, val: rng_slice[j], args: ParseArguments(mtch[1]), c:rng.getCell(i,j) });
-		      }
+          if (OutData_regex.test(rng_slice[j])) {
+            var mtch = rng_slice[j].match(OutData_regex);
+            refreshCells2.push({i: i, j: j, val: rng_slice[j], args: ParseArguments(mtch[1]), c:rng.getCell(i,j) });
+          }
+        }
+      }
+      
+      for(var i=0; i < refreshCells2.length; i++) {
+        if (refreshCells2[i]['args'].length >= 0) {
+          refreshCells2[i][c].formulas = '=' + refreshCells2[i]['args'][0];
+          refreshCells2[i][c].load('values');
         }
       }
       
