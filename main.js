@@ -19,21 +19,21 @@ function ParseArguments(expr) {
         pos = expr.indexOf("'", pos+1);
         break;
       case "(": 
-      	openBr++;
+        openBr++;
         break;
-			case ")":     		
-      	if(openBr==0) {
-        	args.push(expr.substring(spos, pos));
+      case ")":     		
+        if(openBr==0) {
+          args.push(expr.substring(spos, pos));
           return args;
         }
-      	openBr--;
+        openBr--;
         break;
       case ",":
-     		if(openBr==0) {
-        	args.push(expr.substring(spos, pos));
+          if(openBr==0) {
+          args.push(expr.substring(spos, pos));
           spos=pos+1;
         }
-      	break;
+        break;
     }
   }
 
@@ -84,9 +84,9 @@ Office.onReady(function() {
       for(var i=0; i < refreshCells2.length; i++) {
 	      
         if (refreshCells2[i]['args'].length >= 0) {
-	      document.write(JSON.stringify(refreshCells2[i]['args'][0], null, 4));
-        //  refreshCells2[i][c].formulas = '=' + refreshCells2[i]['args'][0];
-          //refreshCells2[i][c].load('values');
+	      //document.write(JSON.stringify(refreshCells2[i]['args'][0], null, 4));
+          refreshCells2[i]['c'].formulas = '=' + refreshCells2[i]['args'][0];
+          refreshCells2[i]['c'].load('values');
         }
       }
       
