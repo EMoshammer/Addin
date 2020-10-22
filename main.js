@@ -16,27 +16,29 @@ Office.onReady(function() {
     
     var f = new Array("A1", "A2", "A3")
     var res = new Array();
+    var refreshcells = new Array();
     
-    var cell = sheet.getRange("B1");
+    refreshcells.push(sheet.getRange("B1"));
+    refreshcells.push(sheet.getRange("B2"));
 
-    cell.formulas = "=" + f[0];
+    refreshcells[0].formulas = "=" + f[0];
     
-    cell.load("values");
+    refreshcells[0].load("values");
     
     return context.sync().then(function () {
-      res.push(cell.values[0][0]);
-      cell.formulas = "=" + f[1];
-      cell.load("values");
+      res.push(refreshcells[0].values[0][0]);
+      refreshcells[0].formulas = "=" + f[1];
+      refreshcells[0].load("values");
     })
     .then(context.sync)
     .then(function () {
-      res.push(cell.values[0][0]);
-      cell.formulas = "=" + f[2];
-      cell.load("values");
+      res.push(refreshcells[0].values[0][0]);
+      refreshcells[0].formulas = "=" + f[2];
+      refreshcells[0].load("values");
     })
     .then(context.sync)
     .then(function () {
-      res.push(cell.values[0][0]);
+      res.push(refreshcells[0].values[0][0]);
       document.write(JSON.stringify(res, null, 4));
     });
     
