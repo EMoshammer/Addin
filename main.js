@@ -34,8 +34,7 @@ Office.onReady(function() {
       cell.formulas = "=" + f[2];
       
       document.write(JSON.stringify(res, null, 4));
-    })
-    ;
+    });
     
     
     if (false) {
