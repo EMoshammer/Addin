@@ -26,9 +26,16 @@ Office.onReady(function() {
     return context.sync().then(function () {
       res.push(cell.values[0][0]);
       cell.formulas = "=" + f[1];
+      cell.load("values");
+    })
+    .then(context.sync)
+    .then(function () {
+      res.push(cell.values[0][0]);
+      cell.formulas = "=" + f[2];
       
       document.write(JSON.stringify(res, null, 4));
-    });
+    })
+    ;
     
     
     if (false) {
