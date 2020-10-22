@@ -9,39 +9,54 @@ Office.onReady(function() {
     
     var sheet = context.workbook.worksheets.getActiveWorksheet();
     
+    var rng = sheet.getUsedRange();
+    rng.load("formulas");
     
     sheet.getRange("A1").values = [[ 1 ]];
     sheet.getRange("A2").values = [[ 2 ]];
-    sheet.getRange("A3").values = [[ 3 ]];
+    sheet.getRange("A3").values = [[ 4 ]];
     
     var f = new Array("A1", "A2", "A3")
     var res = new Array();
-    var refreshcells = new Array();
+    var refreshCells = new Array();
     
-    refreshcells.push(sheet.getRange("B1"));
-    refreshcells.push(sheet.getRange("B2"));
+    refreshCells.push(sheet.getRange("B1"));
+    refreshCells.push(sheet.getRange("B2"));
 
-    refreshcells[0].formulas = "=" + f[0];
-    refreshcells[1].formulas = "=" + f[1];
+    refreshCells[0].formulas = "=" + f[0];
+    refreshCells[1].formulas = "=" + f[1];
     
-    refreshcells[0].load("values");
-    refreshcells[1].load("values");
+    refreshCells[0].load("values");
+    refreshCells[1].load("values");
     
     return context.sync().then(function () {
-      res.push(refreshcells[0].values[0][0]);
-      res.push(refreshcells[1].values[0][0]);
-      refreshcells[0].formulas = "=" + f[1];
-      refreshcells[0].load("values");
+      
+      
+      for(var i = 0; i < rng.formulas.length; i++) {
+        var rng_slice = rng.formulas[i];
+        for(var j = 0; j < rng_slice.length; j++) {
+          if (/^=(?:.*[ !])?OutData\(.*\)/i.test(rng_slice[j])) {
+            //refreshCells.push({i: i, j: j, val: rng_slice[j]}); //, rng: sheet.getCell(i,j), dpa: directPrecedents.areas});
+          }
+          
+        }
+      }
+      
+      
+      res.push(refreshCells[0].values[0][0]);
+      res.push(refreshCells[1].values[0][0]);
+      refreshCells[0].formulas = "=" + f[1];
+      refreshCells[0].load("values");
     })
     .then(context.sync)
     .then(function () {
-      res.push(refreshcells[0].values[0][0]);
-      refreshcells[0].formulas = "=" + f[2];
-      refreshcells[0].load("values");
+      res.push(refreshCells[0].values[0][0]);
+      refreshCells[0].formulas = "=" + f[2];
+      refreshCells[0].load("values");
     })
     .then(context.sync)
     .then(function () {
-      res.push(refreshcells[0].values[0][0]);
+      res.push(refreshCells[0].values[0][0]);
       document.write(JSON.stringify(res, null, 4));
     });
     
