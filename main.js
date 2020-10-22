@@ -32,6 +32,7 @@ Office.onReady(function() {
     .then(function () {
       res.push(cell.values[0][0]);
       cell.formulas = "=" + f[2];
+      cell.load("values");
     })
     .then(context.sync)
     .then(function () {
