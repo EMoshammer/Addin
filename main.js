@@ -69,14 +69,16 @@ Office.onReady(function() {
     
     return context.sync().then(function () {
       
+	    var OutData_regex = /^=(?:.*[ \+\-\*\/!])?OutData\((.*)$/i;
       
       for(var i = 0; i < rng.formulas.length; i++) {
         var rng_slice = rng.formulas[i];
         for(var j = 0; j < rng_slice.length; j++) {
 		      //if (/^=(?:.*[ !])?OutData\(.*\)/i.test(rng_slice[j])) {
-		      if (/^=(?:.*[ \+\-\*\/!])?OutData\((.*)$/i.test(rng_slice[j])) {
-			      refreshCells2.push({i: i, j: j, val: rng_slice[j]});
-	          		var mtch = rng_slice[j].match(/^=(?:.*[ \+\-\*\/!])?OutData\((.*)$/i);
+		      if (OutData_regex.test(rng_slice[j])) {
+			      var mtch = rng_slice[j].match(OutData_regex);
+			      refreshCells2.push({i: i, j: j, val: rng_slice[j], args: mtch[1]});
+	          		
 		      }
           //if (mtch) {
           //  refreshCells2.push({i: i, j: j, val: rng_slice[j]}); //, args: mtch[1]});
