@@ -76,7 +76,7 @@ Office.onReady(function() {
 		      //if (/^=(?:.*[ !])?OutData\(.*\)/i.test(rng_slice[j])) {
 		      if (/^=(?:.*[ \+\-\*\/!])?OutData\((.*)$/i.test(rng_slice[j])) {
 			      refreshCells2.push({i: i, j: j, val: rng_slice[j]});
-	          //var mtch = rng_slice[0].match(/^=(?:.*[ \+\-\*\/!])?OutData\((.*)$/i);
+	          		var mtch = rng_slice[j].match(/^=(?:.*[ \+\-\*\/!])?OutData\((.*)$/i);
 		      }
           //if (mtch) {
           //  refreshCells2.push({i: i, j: j, val: rng_slice[j]}); //, args: mtch[1]});
