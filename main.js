@@ -73,11 +73,10 @@ Office.onReady(function() {
       for(var i = 0; i < rng.formulas.length; i++) {
         var rng_slice = rng.formulas[i];
         for(var j = 0; j < rng_slice.length; j++) {
-          var tst = /^=(?:.*[ !])?OutData\(.*\)/i.test(rng_slice[j]);
-          if (tst) {
-            refreshCells2.push({i: i, j: j, val: rng_slice[j]});
+	  var mtch = /^=(?:.*[ +-*/!])?OutData\((.*$/i.match(rng_slice[j]);
+          if (mtch) {
+            refreshCells2.push({i: i, j: j, val: rng_slice[j], args: ParseArguments(mtch[0])});
           }
-          
         }
       }
       
