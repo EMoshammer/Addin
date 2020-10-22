@@ -52,20 +52,10 @@ Office.onReady(function() {
     sheet.getRange("A1").values = [[ 1 ]];
     sheet.getRange("A2").values = [[ 2 ]];
     sheet.getRange("A3").values = [[ 4 ]];
-    
-    var f = new Array("A1", "A2", "A3")
-    var res = new Array();
-    var refreshCells = new Array();
-    var refreshCells2 = new Array();
-    
-    refreshCells.push(sheet.getRange("B1"));
-    refreshCells.push(sheet.getRange("B2"));
+    sheet.getRange("B1").values = [[ 5 ]];
+    sheet.getRange("B2").values = [[ 2 ]];
 
-    refreshCells[0].formulas = "=" + f[0];
-    refreshCells[1].formulas = "=" + f[1];
-    
-    refreshCells[0].load("values");
-    refreshCells[1].load("values");
+    var refreshCells = new Array();
     
     return context.sync().then(function () {
       
@@ -76,54 +66,45 @@ Office.onReady(function() {
         for(var j = 0; j < rng_slice.length; j++) {
           if (OutData_regex.test(rng_slice[j])) {
             var mtch = rng_slice[j].match(OutData_regex);
-            refreshCells2.push({i: i, j: j, val: rng_slice[j], args: ParseArguments(mtch[1]), c:rng.getCell(i,j) });
+            refreshCells.push({i: i, j: j, val: rng_slice[j], args: ParseArguments(mtch[1]), c:rng.getCell(i,j) });
           }
         }
       }
       
-      for(var i=0; i < refreshCells2.length; i++) {
-        if (refreshCells2[i]['args'].length >= 0) {
-          refreshCells2[i]['c'].formulas = '=' + refreshCells2[i]['args'][0];
-          refreshCells2[i]['c'].load('values');
+      for(var i=0; i < refreshCells.length; i++) {
+        if (refreshCells[i]['args'].length >= 0) {
+          refreshCells[i]['c'].formulas = '=' + refreshCells[i]['args'][0];
+          refreshCells[i]['c'].load('values');
         }
       }
       
       
-      res.push(refreshCells[0].values[0][0]);
-      res.push(refreshCells[1].values[0][0]);
-      refreshCells[0].formulas = "=" + f[1];
-      refreshCells[0].load("values");
     })
     .then(context.sync)
     .then(function () {
       
-      for(var i=0; i < refreshCells2.length; i++) {
-        if (refreshCells2[i]['args'].length >= 0) {
-          refreshCells2[i]['args'][0] = refreshCells2[i]['c'].values[0][0];
+      for(var i=0; i < refreshCells.length; i++) {
+        if (refreshCells[i]['args'].length >= 0) {
+          refreshCells[i]['args'][0] = refreshCells[i]['c'].values[0][0];
         }
-        if (refreshCells2[i]['args'].length >= 1) {
-          refreshCells2[i]['c'].formulas = '=' + refreshCells2[i]['args'][1];
-          refreshCells2[i]['c'].load('values');
+        if (refreshCells[i]['args'].length >= 1) {
+          refreshCells[i]['c'].formulas = '=' + refreshCells[i]['args'][1];
+          refreshCells[i]['c'].load('values');
         }
       }
-      
-      res.push(refreshCells[0].values[0][0]);
-      refreshCells[0].formulas = "=" + f[2];
-      refreshCells[0].load("values");
+
     })
     .then(context.sync)
     .then(function () {
       
-      for(var i=0; i < refreshCells2.length; i++) {
-        if (refreshCells2[i]['args'].length >= 1) {
-          refreshCells2[i]['args'][1] = refreshCells2[i]['c'].values[0][0];
+      for(var i=0; i < refreshCells.length; i++) {
+        if (refreshCells[i]['args'].length >= 1) {
+          refreshCells[i]['args'][1] = refreshCells[i]['c'].values[0][0];
         }
-        refreshCells2[i]['c'].formulas = refreshCells2[i]['val'];
+        refreshCells[i]['c'].formulas = refreshCells[i]['val'];
       }
       
-      res.push(refreshCells[0].values[0][0]);
-      document.write(JSON.stringify(res, null, 4));
-      document.write(JSON.stringify(refreshCells2, null, 4));
+      document.write(JSON.stringify(refreshCells, null, 4));
     });
     
     
