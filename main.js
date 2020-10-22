@@ -22,11 +22,14 @@ Office.onReady(function() {
     refreshcells.push(sheet.getRange("B2"));
 
     refreshcells[0].formulas = "=" + f[0];
+    refreshcells[1].formulas = "=" + f[1];
     
     refreshcells[0].load("values");
+    refreshcells[1].load("values");
     
     return context.sync().then(function () {
       res.push(refreshcells[0].values[0][0]);
+      res.push(refreshcells[1].values[0][0]);
       refreshcells[0].formulas = "=" + f[1];
       refreshcells[0].load("values");
     })
