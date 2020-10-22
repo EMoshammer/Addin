@@ -77,7 +77,7 @@ Office.onReady(function() {
 		      //if (/^=(?:.*[ !])?OutData\(.*\)/i.test(rng_slice[j])) {
 		      if (OutData_regex.test(rng_slice[j])) {
 			      var mtch = rng_slice[j].match(OutData_regex);
-			      refreshCells2.push({i: i, j: j, val: rng_slice[j], args: mtch[1]});
+			      refreshCells2.push({i: i, j: j, val: rng_slice[j], args: ParseArguments(mtch[1])});
 	          		
 		      }
           //if (mtch) {
