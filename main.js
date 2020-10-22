@@ -24,7 +24,8 @@ Office.onReady(function() {
     cell.load("values");
     
     return context.sync().then(function () {
-      res.push(cell.values);
+      res.push(cell.values[0][0]);
+      cell.formulas = "=" + f[1];
       
       document.write(JSON.stringify(res, null, 4));
     });
