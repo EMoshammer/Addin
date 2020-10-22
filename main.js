@@ -84,7 +84,7 @@ Office.onReady(function() {
       for(var i=0; i < refreshCells2.length; i++) {
         if (refreshCells2[i]['args'].length >= 0) {
           refreshCells2[i][c].formulas = '=' + refreshCells2[i]['args'][0];
-          refreshCells2[i][c].load('values');
+          //refreshCells2[i][c].load('values');
         }
       }
       
