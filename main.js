@@ -10,10 +10,19 @@ Office.onReady(function() {
     var sheet = context.workbook.worksheets.getActiveWorksheet();
     
     
-    sheet.getRange("A1").values = [[ 5 ]];
+    sheet.getRange("A1").values = [[ 1 ]];
+    sheet.getRange("A2").values = [[ 2 ]];
+    sheet.getRange("A3").values = [[ 3 ]];
+    
+    var f = new Array("A1", "A2", "A3")
     
     var cell = sheet.getRange("B1");
-    cell.formulas = [[ "=A1" ]];
+    
+    for (var i=0;i<f.length;i++) {
+      cell.formulas = "=" + f[i];
+    }
+    
+    
     cell.load("values");
     
     return context.sync().then(function () {
