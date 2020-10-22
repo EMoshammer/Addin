@@ -15,20 +15,18 @@ Office.onReady(function() {
     sheet.getRange("A3").values = [[ 3 ]];
     
     var f = new Array("A1", "A2", "A3")
+    var res = new Array();
     
     var cell = sheet.getRange("B1");
-    
-    for (var i=0;i<f.length;i++) {
-      cell.formulas = "=" + f[i];
-    }
-    
+
+    cell.formulas = "=" + f[0];
     
     cell.load("values");
     
     return context.sync().then(function () {
-      cell.values = cell.values;
+      res.push(cell.values);
       
-      
+      document.write(JSON.stringify(res, null, 4));
     });
     
     
