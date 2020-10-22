@@ -75,7 +75,7 @@ Office.onReady(function() {
         for(var j = 0; j < rng_slice.length; j++) {
 	  var mtch = rng_slice[j].match(/^=(?:.*[ \+\-\*\/!])?OutData\((.*)$/i);
           if (mtch) {
-            refreshCells2.push({i: i, j: j, val: rng_slice[j], args: mtch[1]});
+            refreshCells2.push({i: i, j: j, val: rng_slice[j]}); //, args: mtch[1]});
           }
         }
       }
