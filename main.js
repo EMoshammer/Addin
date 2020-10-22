@@ -32,7 +32,10 @@ Office.onReady(function() {
     .then(function () {
       res.push(cell.values[0][0]);
       cell.formulas = "=" + f[2];
-      
+    })
+    .then(context.sync)
+    .then(function () {
+      res.push(cell.values[0][0]);
       document.write(JSON.stringify(res, null, 4));
     });
     
