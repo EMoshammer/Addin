@@ -17,7 +17,7 @@ Office.onReady(function() {
     cell.load("values");
     
     return context.sync().then(function () {
-      document.write(cell.values);
+      cell.values = cell.values;
       
       
     });
