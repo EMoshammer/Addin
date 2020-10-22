@@ -3,6 +3,43 @@
 //https://github.com/formulajs/formulajs
 //https://stackoverflow.com/questions/64464114/excel-function-parsing-in-office-js
 
+function ParseArguments(expr) {
+
+	args = [];
+	openBr = 0;
+  spos = 0;
+  
+  for (var pos=spos; pos<expr.length; pos++) {
+  
+    switch(expr[pos]) {
+      case '"':
+        pos = expr.indexOf('"', pos+1);
+        break;
+      case "'":
+        pos = expr.indexOf("'", pos+1);
+        break;
+      case "(": 
+      	openBr++;
+        break;
+			case ")":     		
+      	if(openBr==0) {
+        	args.push(expr.substring(spos, pos));
+          return args;
+        }
+      	openBr--;
+        break;
+      case ",":
+     		if(openBr==0) {
+        	args.push(expr.substring(spos, pos));
+          spos=pos+1;
+        }
+      	break;
+    }
+  }
+
+  return args;
+}
+
 Office.onReady(function() {
   
   Excel.run(function (context) {
@@ -19,6 +56,7 @@ Office.onReady(function() {
     var f = new Array("A1", "A2", "A3")
     var res = new Array();
     var refreshCells = new Array();
+    var refreshCells2 = new Array();
     
     refreshCells.push(sheet.getRange("B1"));
     refreshCells.push(sheet.getRange("B2"));
@@ -35,8 +73,9 @@ Office.onReady(function() {
       for(var i = 0; i < rng.formulas.length; i++) {
         var rng_slice = rng.formulas[i];
         for(var j = 0; j < rng_slice.length; j++) {
-          if (/^=(?:.*[ !])?OutData\(.*\)/i.test(rng_slice[j])) {
-            //refreshCells.push({i: i, j: j, val: rng_slice[j]}); //, rng: sheet.getCell(i,j), dpa: directPrecedents.areas});
+          var tst = /^=(?:.*[ !])?OutData\(.*\)/i.test(rng_slice[j]);
+          if (tst) {
+            refreshCells2.push({i: i, j: j, val: rng_slice[j]});
           }
           
         }
@@ -58,6 +97,7 @@ Office.onReady(function() {
     .then(function () {
       res.push(refreshCells[0].values[0][0]);
       document.write(JSON.stringify(res, null, 4));
+      document.write(JSON.stringify(refreshCells2, null, 4));
     });
     
     
