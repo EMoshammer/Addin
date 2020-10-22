@@ -16,7 +16,11 @@ Office.onReady(function() {
     cell.formulas = [[ "=A1" ]];
     cell.load("values");
     
-    return context.sync();
+    return context.sync().then(function () {
+      document.write(cell.values);
+      
+      
+    });
     
     
     if (false) {
