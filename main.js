@@ -9,9 +9,21 @@ Office.onReady(function() {
     
     var sheet = context.workbook.worksheets.getActiveWorksheet();
     
+    
+    sheet.getRange("A1").values = [[ 5 ]];
+    
+    var cell = sheet.getRange("B1");
+    cell.formulas = [[ "=A1" ]];
+    cell.load("values");
+    
+    return context.sync();
+    
+    
+    if (false) {
+    
     var rng = sheet.getUsedRange();
     rng.load("formulas");
-    
+      
     sheet.getRange("B2").values = [[ 5 ]];
     
     var refreshCells = new Array();
@@ -73,5 +85,7 @@ Office.onReady(function() {
       });
     
     return context.sync();
+      
+    }
   });
 });
