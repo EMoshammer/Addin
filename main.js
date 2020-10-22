@@ -82,9 +82,7 @@ Office.onReady(function() {
       }
       
       for(var i=0; i < refreshCells2.length; i++) {
-	      
         if (refreshCells2[i]['args'].length >= 0) {
-	      //document.write(JSON.stringify(refreshCells2[i]['args'][0], null, 4));
           refreshCells2[i]['c'].formulas = '=' + refreshCells2[i]['args'][0];
           refreshCells2[i]['c'].load('values');
         }
@@ -98,12 +96,31 @@ Office.onReady(function() {
     })
     .then(context.sync)
     .then(function () {
+      
+      for(var i=0; i < refreshCells2.length; i++) {
+        if (refreshCells2[i]['args'].length >= 0) {
+          refreshCells2[i]['args'][0] = refreshCells2[i]['c'].values[0][0];
+        }
+        if (refreshCells2[i]['args'].length >= 1) {
+          refreshCells2[i]['c'].formulas = '=' + refreshCells2[i]['args'][1];
+          refreshCells2[i]['c'].load('values');
+        }
+      }
+      
       res.push(refreshCells[0].values[0][0]);
       refreshCells[0].formulas = "=" + f[2];
       refreshCells[0].load("values");
     })
     .then(context.sync)
     .then(function () {
+      
+      for(var i=0; i < refreshCells2.length; i++) {
+        if (refreshCells2[i]['args'].length >= 1) {
+          refreshCells2[i]['args'][1] = refreshCells2[i]['c'].values[0][0];
+        }
+        refreshCells2[i]['c'].formulas = refreshCells2[i]['val'];
+      }
+      
       res.push(refreshCells[0].values[0][0]);
       document.write(JSON.stringify(res, null, 4));
       document.write(JSON.stringify(refreshCells2, null, 4));
