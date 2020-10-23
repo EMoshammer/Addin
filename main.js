@@ -102,8 +102,10 @@ Office.onReady(function() {
       
       LoadNextParam(refreshCells, -1);
       
-      document.write(JSON.stringify(refreshCells, null, 4));
+      
     });
+    
+    document.write(JSON.stringify(refreshCells, null, 4));
     
     
     if (false) {
