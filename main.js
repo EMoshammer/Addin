@@ -94,8 +94,11 @@ Office.onReady(function() {
       }
 
     })
-    .then(LoadNextParam(refreshCells, 1))
-    .then(LoadNextParam(refreshCells, 0))
+    .then(function () {return LoadNextParam(refreshCells, 4);})
+    .then(function () {return LoadNextParam(refreshCells, 3);})
+    .then(function () {return LoadNextParam(refreshCells, 2);})
+    .then(function () {return LoadNextParam(refreshCells, 1);})
+    .then(function () {return LoadNextParam(refreshCells, 0);})
     .then(function () {return LoadNextParam(refreshCells, -1);})
     .then(function () {
       
