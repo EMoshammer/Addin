@@ -75,8 +75,6 @@ Office.onReady(function() {
           refreshCells[i]['c'].formulas = refreshCells[i]['val'];
         }
       }
-      
-      return refreshCells;
     }
     
     
@@ -94,20 +92,19 @@ Office.onReady(function() {
         }
       }
       
-      refreshCells = LoadNextParam(refreshCells, 1);
+      LoadNextParam(refreshCells, 1);
 
     })
     .then(context.sync)
     .then(function () {
       
-      //refreshCells = 
         LoadNextParam(refreshCells, 0);
 
     })
     .then(context.sync)
     .then(function () {
       
-      refreshCells = LoadNextParam(refreshCells, -1);
+      LoadNextParam(refreshCells, -1);
       
       document.write(JSON.stringify(refreshCells, null, 4));
     });
