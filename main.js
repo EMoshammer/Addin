@@ -59,7 +59,7 @@ Office.onReady(function() {
 
     var refreshCells = new Array();
     
-    function LoadNextParam(context, refreshCells, iter) {
+    function LoadNextParam(contextX, refreshCells, iter) {
       
       for(var i=0; i < refreshCells.length; i++) {
         if (refreshCells[i]['args'].length > iter+1) {
