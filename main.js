@@ -75,7 +75,6 @@ Office.onReady(function() {
         }
       }
 
-      return context.sync();
     }
     
     
@@ -94,12 +93,12 @@ Office.onReady(function() {
       }
 
     })
-    .then(function () {return LoadNextParam(refreshCells, 4);})
-    .then(function () {return LoadNextParam(refreshCells, 3);})
-    .then(function () {return LoadNextParam(refreshCells, 2);})
-    .then(function () {return LoadNextParam(refreshCells, 1);})
-    .then(function () {return LoadNextParam(refreshCells, 0);})
-    .then(function () {return LoadNextParam(refreshCells, -1);})
+    .then(function () { LoadNextParam(refreshCells, 4);}).then(context.sync)
+    .then(function () { LoadNextParam(refreshCells, 3);}).then(context.sync)
+    .then(function () { LoadNextParam(refreshCells, 2);}).then(context.sync)
+    .then(function () { LoadNextParam(refreshCells, 1);}).then(context.sync)
+    .then(function () { LoadNextParam(refreshCells, 0);}).then(context.sync)
+    .then(function () { LoadNextParam(refreshCells, -1);})
     .then(function () {
       
       document.write(JSON.stringify(refreshCells, null, 4));
