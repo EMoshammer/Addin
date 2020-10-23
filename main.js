@@ -96,11 +96,7 @@ Office.onReady(function() {
 
     })
     .then(context.sync)
-    .then(function () {
-      
-        LoadNextParam(refreshCells, 0);
-
-    })
+    .then(LoadNextParam(refreshCells, 0))
     .then(context.sync)
     .then(function () {
       
