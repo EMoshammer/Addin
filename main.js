@@ -61,7 +61,6 @@ Office.onReady(function() {
     
     function LoadNextParam(iter) {
       
-document.write(JSON.stringify(iter, null, 4));
       
       for(var i=0; i < refreshCells.length; i++) {
         if (refreshCells[i]['args'].length > iter+1) {
@@ -107,7 +106,7 @@ document.write(JSON.stringify(iter, null, 4));
     .then(context.sync)
     .then(function () {
       
-      LoadNextParam(0);
+      //LoadNextParam(0);
       
       //for(var i=0; i < refreshCells.length; i++) {
       //  if (refreshCells[i]['args'].length > 0+1) {
@@ -118,7 +117,20 @@ document.write(JSON.stringify(iter, null, 4));
       //    refreshCells[i]['c'].load('values');
       //  }
       //}
-
+      var iter = 0;
+      for(var i=0; i < refreshCells.length; i++) {
+        if (refreshCells[i]['args'].length > iter+1) {
+          refreshCells[i]['args'][iter+1] = refreshCells[i]['c'].values[0][0];
+        }
+        if (iter >= 0) { 
+          if (refreshCells[i]['args'].length > iter) {
+            refreshCells[i]['c'].formulas = '=' + refreshCells[i]['args'][iter];
+            refreshCells[i]['c'].load('values');
+          }
+        } else {
+          refreshCells[i]['c'].formulas = refreshCells[i]['val'];
+        }
+      }
     })
     .then(context.sync)
     .then(function () {
