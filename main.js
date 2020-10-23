@@ -75,7 +75,7 @@ Office.onReady(function() {
         }
       }
 
-      return iif(iter >= 0, context.sync(), context.sync);
+      return context.sync();
     }
     
     
