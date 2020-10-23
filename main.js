@@ -96,8 +96,8 @@ document.write(JSON.stringify(iter, null, 4));
       //LoadNextParam(1);
       
       for(var i=0; i < refreshCells.length; i++) {
-        if (refreshCells[i]['args'].length >= 0) {
-          refreshCells[i]['c'].formulas = '=' + refreshCells[i]['args'][0];
+        if (refreshCells[i]['args'].length > 1) {
+          refreshCells[i]['c'].formulas = '=' + refreshCells[i]['args'][1];
           refreshCells[i]['c'].load('values');
         }
       }
@@ -110,11 +110,11 @@ document.write(JSON.stringify(iter, null, 4));
       //LoadNextParam(0);
       
       for(var i=0; i < refreshCells.length; i++) {
-        if (refreshCells[i]['args'].length >= 0) {
-          refreshCells[i]['args'][0] = refreshCells[i]['c'].values[0][0];
+        if (refreshCells[i]['args'].length > 0+1) {
+          refreshCells[i]['args'][0+1] = refreshCells[i]['c'].values[0][0];
         }
-        if (refreshCells[i]['args'].length >= 1) {
-          refreshCells[i]['c'].formulas = '=' + refreshCells[i]['args'][1];
+        if (refreshCells[i]['args'].length > 0) {
+          refreshCells[i]['c'].formulas = '=' + refreshCells[i]['args'][0];
           refreshCells[i]['c'].load('values');
         }
       }
@@ -126,8 +126,8 @@ document.write(JSON.stringify(iter, null, 4));
       //LoadNextParam(-1);
       
       for(var i=0; i < refreshCells.length; i++) {
-        if (refreshCells[i]['args'].length >= 1) {
-          refreshCells[i]['args'][1] = refreshCells[i]['c'].values[0][0];
+        if (refreshCells[i]['args'].length > -1+1) {
+          refreshCells[i]['args'][-1+1] = refreshCells[i]['c'].values[0][0];
         }
         refreshCells[i]['c'].formulas = refreshCells[i]['val'];
       }
