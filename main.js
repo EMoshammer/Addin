@@ -59,7 +59,7 @@ Office.onReady(function() {
 
     var refreshCells = new Array();
     
-    function LoadNextParam(iter) {
+    function LoadNextParam(refreshCells, iter) {
       
       
       for(var i=0; i < refreshCells.length; i++) {
@@ -75,6 +75,8 @@ Office.onReady(function() {
           refreshCells[i]['c'].formulas = refreshCells[i]['val'];
         }
       }
+      
+      return refreshCells;
     }
     
     
@@ -106,7 +108,7 @@ Office.onReady(function() {
     .then(context.sync)
     .then(function () {
       
-      //LoadNextParam(0);
+      refreshCells = LoadNextParam(refreshCells, 0);
       
       //for(var i=0; i < refreshCells.length; i++) {
       //  if (refreshCells[i]['args'].length > 0+1) {
@@ -117,20 +119,7 @@ Office.onReady(function() {
       //    refreshCells[i]['c'].load('values');
       //  }
       //}
-      var iter = 0;
-      for(var i=0; i < refreshCells.length; i++) {
-        if (refreshCells[i]['args'].length > iter+1) {
-          refreshCells[i]['args'][iter+1] = refreshCells[i]['c'].values[0][0];
-        }
-        if (iter >= 0) { 
-          if (refreshCells[i]['args'].length > iter) {
-            refreshCells[i]['c'].formulas = '=' + refreshCells[i]['args'][iter];
-            refreshCells[i]['c'].load('values');
-          }
-        } else {
-          refreshCells[i]['c'].formulas = refreshCells[i]['val'];
-        }
-      }
+
     })
     .then(context.sync)
     .then(function () {
