@@ -76,7 +76,7 @@ document.write(JSON.stringify(iter, null, 4));
         //  refreshCells[i]['c'].formulas = refreshCells[i]['val'];
         //}
       }
-
+document.write(JSON.stringify(iter, null, 4));
     }
     
     
