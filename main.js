@@ -94,14 +94,14 @@ Office.onReady(function() {
         }
       }
       
-      //LoadNextParam(1);
+      refreshCells = LoadNextParam(refreshCells, 1);
       
-      for(var i=0; i < refreshCells.length; i++) {
-        if (refreshCells[i]['args'].length > 1) {
-          refreshCells[i]['c'].formulas = '=' + refreshCells[i]['args'][1];
-          refreshCells[i]['c'].load('values');
-        }
-      }
+      //for(var i=0; i < refreshCells.length; i++) {
+      //  if (refreshCells[i]['args'].length > 1) {
+      //    refreshCells[i]['c'].formulas = '=' + refreshCells[i]['args'][1];
+      //    refreshCells[i]['c'].load('values');
+      //  }
+      //}
       
       
     })
@@ -124,14 +124,14 @@ Office.onReady(function() {
     .then(context.sync)
     .then(function () {
       
-      //LoadNextParam(-1);
+      refreshCells = LoadNextParam(refreshCells, -1);
       
-      for(var i=0; i < refreshCells.length; i++) {
-        if (refreshCells[i]['args'].length > -1+1) {
-          refreshCells[i]['args'][-1+1] = refreshCells[i]['c'].values[0][0];
-        }
-        refreshCells[i]['c'].formulas = refreshCells[i]['val'];
-      }
+      //for(var i=0; i < refreshCells.length; i++) {
+      //  if (refreshCells[i]['args'].length > -1+1) {
+      //    refreshCells[i]['args'][-1+1] = refreshCells[i]['c'].values[0][0];
+      //  }
+      //  refreshCells[i]['c'].formulas = refreshCells[i]['val'];
+      //}
       
       document.write(JSON.stringify(refreshCells, null, 4));
     });
