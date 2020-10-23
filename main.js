@@ -98,9 +98,9 @@ Office.onReady(function() {
       //LoadNextParam(refreshCells, 1);
 
     })
-    .then(function () { LoadNextParam(context, refreshCells, 1); })//.then(context.sync)
-    .then(function () { LoadNextParam(context, refreshCells, 0); })//.then(context.sync)
-    .then(function () { LoadNextParam(context, refreshCells, -1); })
+    .then(LoadNextParam(context, refreshCells, 1))//.then(context.sync)
+    .then(LoadNextParam(context, refreshCells, 0))//.then(context.sync)
+    .then(LoadNextParam(context, refreshCells, -1))
     .then(function () {
       
       document.write(JSON.stringify(refreshCells, null, 4));
