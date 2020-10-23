@@ -40,7 +40,23 @@ function ParseArguments(expr) {
   return args;
 }
 
+function LoadNextParam(refreshCells, iter) {
 
+  for(var i=0; i < refreshCells.length; i++) {
+    if (refreshCells[i]['args'].length > iter+1) {
+      refreshCells[i]['args'][iter+1] = refreshCells[i]['c'].values[0][0];
+    }
+    if (iter >= 0) { 
+      if (refreshCells[i]['args'].length > iter) {
+        refreshCells[i]['c'].formulas = '=' + refreshCells[i]['args'][iter];
+        refreshCells[i]['c'].load('values');
+      }
+    } else {
+      refreshCells[i]['c'].formulas = refreshCells[i]['val'];
+    }
+  }
+
+}
   
 Office.onReady(function() {
   
@@ -59,23 +75,7 @@ Office.onReady(function() {
 
     var refreshCells = new Array();
     
-    function LoadNextParam(refreshCells, iter) {
-      
-      for(var i=0; i < refreshCells.length; i++) {
-        if (refreshCells[i]['args'].length > iter+1) {
-          refreshCells[i]['args'][iter+1] = refreshCells[i]['c'].values[0][0];
-        }
-        if (iter >= 0) { 
-          if (refreshCells[i]['args'].length > iter) {
-            refreshCells[i]['c'].formulas = '=' + refreshCells[i]['args'][iter];
-            refreshCells[i]['c'].load('values');
-          }
-        } else {
-          refreshCells[i]['c'].formulas = refreshCells[i]['val'];
-        }
-      }
 
-    }
     
     
     return context.sync().then(function () {
