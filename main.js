@@ -5,8 +5,8 @@
 
 function ParseArguments(expr) {
 
-	args = [];
-	openBr = 0;
+  args = [];
+  openBr = 0;
   spos = 0;
   
   for (var pos=spos; pos<expr.length; pos++) {
@@ -40,6 +40,20 @@ function ParseArguments(expr) {
   return args;
 }
 
+function LoadNextParam(refreshCells, iter) {
+ 
+  for(var i=0; i < refreshCells.length; i++) {
+    if (refreshCells[i]['args'].length >= iter+1) {
+      refreshCells[i]['args'][iter+1] = refreshCells[i]['c'].values[0][0];
+    }
+    if (refreshCells[i]['args'].length >= iter) {
+      refreshCells[i]['c'].formulas = '=' + refreshCells[i]['args'][iter];
+      refreshCells[i]['c'].load('values');
+    }
+  }
+  
+}
+  
 Office.onReady(function() {
   
   Excel.run(function (context) {
@@ -71,27 +85,31 @@ Office.onReady(function() {
         }
       }
       
-      for(var i=0; i < refreshCells.length; i++) {
-        if (refreshCells[i]['args'].length >= 0) {
-          refreshCells[i]['c'].formulas = '=' + refreshCells[i]['args'][0];
-          refreshCells[i]['c'].load('values');
-        }
-      }
+      LoadNextParam(refreshCells, 1);
+      
+      //for(var i=0; i < refreshCells.length; i++) {
+      //  if (refreshCells[i]['args'].length >= 0) {
+      //    refreshCells[i]['c'].formulas = '=' + refreshCells[i]['args'][0];
+      //    refreshCells[i]['c'].load('values');
+      //  }
+      //}
       
       
     })
     .then(context.sync)
     .then(function () {
       
-      for(var i=0; i < refreshCells.length; i++) {
-        if (refreshCells[i]['args'].length >= 0) {
-          refreshCells[i]['args'][0] = refreshCells[i]['c'].values[0][0];
-        }
-        if (refreshCells[i]['args'].length >= 1) {
-          refreshCells[i]['c'].formulas = '=' + refreshCells[i]['args'][1];
-          refreshCells[i]['c'].load('values');
-        }
-      }
+      LoadNextParam(refreshCells, 0);
+      
+      //for(var i=0; i < refreshCells.length; i++) {
+      //  if (refreshCells[i]['args'].length >= 0) {
+      //    refreshCells[i]['args'][0] = refreshCells[i]['c'].values[0][0];
+      //  }
+      //  if (refreshCells[i]['args'].length >= 1) {
+      //    refreshCells[i]['c'].formulas = '=' + refreshCells[i]['args'][1];
+      //    refreshCells[i]['c'].load('values');
+      //  }
+      //}
 
     })
     .then(context.sync)
