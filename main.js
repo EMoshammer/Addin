@@ -75,6 +75,11 @@ Office.onReady(function() {
           refreshCells[i]['c'].formulas = refreshCells[i]['val'];
         }
       }
+      
+      if (iter >= 0) {
+        return context.sync();
+      }
+      
     }
     
     
@@ -95,8 +100,8 @@ Office.onReady(function() {
       //LoadNextParam(refreshCells, 1);
 
     })
-    .then(function () { LoadNextParam(refreshCells, 1); }).then(context.sync)
-    .then(function () { LoadNextParam(refreshCells, 0); }).then(context.sync)
+    .then(function () { LoadNextParam(refreshCells, 1); })//.then(context.sync)
+    .then(function () { LoadNextParam(refreshCells, 0); })//.then(context.sync)
     .then(function () { LoadNextParam(refreshCells, -1); })
     .then(function () {
       
