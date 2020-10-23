@@ -92,17 +92,12 @@ Office.onReady(function() {
         }
       }
       
-      LoadNextParam(refreshCells, 1);
+      //LoadNextParam(refreshCells, 1);
 
     })
-    .then(context.sync)
-    .then(function () {
-      LoadNextParam(refreshCells, 0);
-     })
-    .then(context.sync)
-    .then(function () {
-      LoadNextParam(refreshCells, -1);
-     }) 
+    .then(function () { LoadNextParam(refreshCells, 1); }).then(context.sync)
+    .then(function () { LoadNextParam(refreshCells, 0); }).then(context.sync)
+    .then(function () { LoadNextParam(refreshCells, -1); })
     .then(function () {
       
       document.write(JSON.stringify(refreshCells, null, 4));
