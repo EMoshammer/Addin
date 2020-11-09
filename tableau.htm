@@ -66,7 +66,7 @@
     myConnector.getData = function(table, doneCallback) {
         var tableData = [];
         if (table.tableInfo.id === "users") {
-            $.getJSON("http://jsonplaceholder.typicode.com/users", function(resp) {
+            $.getJSON("https://jsonplaceholder.typicode.com/users", function(resp) {
                 for (var i = 0; i < resp.length; i++) {
 					// Only return the first 5 users to demonstrate filtering
                     if (resp[i].id <= 5) {
@@ -99,7 +99,7 @@
             // get the posts for only those users.
             for (var userId in filterValues) {
               var postFetch = new Promise(function(resolve, reject) {
-                $.getJSON("http://jsonplaceholder.typicode.com/posts?userId=" + userId, function(resp) {
+                $.getJSON("https://jsonplaceholder.typicode.com/posts?userId=" + userId, function(resp) {
                   for (var i = 0; i < resp.length; i++) {
                       tableData.push({
                           "id": resp[i].id,
