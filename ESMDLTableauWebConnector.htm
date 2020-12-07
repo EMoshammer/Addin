@@ -42,7 +42,7 @@
 					columns: [
 						{ id: "series_id",	dataType: tableau.dataTypeEnum.int }, 
 						{ id: "index",		dataType: tableau.dataTypeEnum.string },
-						{ id: "value",		dataType: tableau.dataTypeEnum.string }
+						{ id: "value",		dataType: tableau.dataTypeEnum.float }
 					]
 				};
 				schemaCallback([SeriesTable, ValueTable]);
@@ -109,16 +109,13 @@
 							{ "index": "2022-12-31", "value": 2.1 },
 						]
 					}
-				]
+				];
 
 				ajax_success = function(resp) {
-					var feat = resp.features,
-						tableData = [];
-
-					var i = 0;
+					var tableData = [];
 
 					if (table.tableInfo.id == "Series") {
-						for (i = 0; i < response_data.length; i++) {
+						for (var i = 0; i < response_data.length; i++) {
 							tableData.push({ 
 								"series_id": response_data[i].id, 
 								"dataset": response_data[i].dataset, 
@@ -130,8 +127,8 @@
 					}
 
 					if (table.tableInfo.id == "Values") {
-						for (i = 0; i < response_data.length; i++) {
-							for (j = 0; i < response_data[i].data.length; i++) {
+						for (var i = 0; i < response_data.length; i++) {
+							for (var j = 0; i < response_data[i].data.length; i++) {
 								tableData.push({
 									"series_id": response_data[i].id, 
 									"index": response_data[i].data[j].index, 
@@ -154,6 +151,8 @@
 
 			tableau.registerConnector(myConnector);
 		
+		
+			//myConnector.getData({"tableInfo" : { "id" : "Series" }}, null);
 		
 			datepicker_options = {
 				changeMonth: true,
