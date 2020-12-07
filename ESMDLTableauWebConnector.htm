@@ -1,0 +1,167 @@
+
+<html>
+<head>
+    <title>ESM Data layer Tableau Web Connector</title>
+    <meta http-equiv="Cache-Control" content="no-store" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+	
+	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+	
+	
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	
+    <script src="https://connectors.tableau.com/libs/tableauwdc-2.3.latest.js" type="text/javascript"></script>
+    <script type="text/javascript">
+		$( function() {
+		
+			// Create the connector object
+			var myConnector = tableau.makeConnector();
+
+			// Define the schema
+			myConnector.getSchema = function(schemaCallback) {
+				// Schema for Series data
+				var SeriesTable = {
+					id: "Series",
+					alias: "Series Data",
+					columns: [
+						{ id: "series_id",	dataType: tableau.dataTypeEnum.int }, 
+						{ id: "dataset",	dataType: tableau.dataTypeEnum.string },
+						{ id: "series",		dataType: tableau.dataTypeEnum.string },
+						{ id: "region",		dataType: tableau.dataTypeEnum.string },
+						{ id: "attribute",	dataType: tableau.dataTypeEnum.string }
+					]
+				};
+
+				// Schema for Value data
+
+				var ValueTable = {
+					id: "Values",
+					alias: "Value data",
+					columns: [
+						{ id: "series_id",	dataType: tableau.dataTypeEnum.int }, 
+						{ id: "index",		dataType: tableau.dataTypeEnum.string },
+						{ id: "value",		dataType: tableau.dataTypeEnum.string }
+					]
+				};
+				schemaCallback([SeriesTable, ValueTable]);
+			};
+		
+			// Download the data
+			myConnector.getData = function(table, doneCallback) {
+				var connectionData = 1,//JSON.parse(tableau.connectionData),
+					restendpoint = "https://tst01-jarvis-ema.esm.europa.eu/jarvis/api/jarvis-tsm/1/series/search/bulk";
+
+				var data = [
+				  {
+					"id": "1",
+					"dataset": "EWS",
+					"series": "Bal_Opening",
+					"region": "ES",
+					"attribute": null,
+					"revision": null,
+					"startIndex": "2020-01-01",
+					"endIndex": "2022-12-31"
+				  }
+				];
+
+				ajax_success = function(resp) {
+					var feat = resp.features,
+						tableData = [];
+
+					var i = 0;
+
+					if (table.tableInfo.id == "Series") {
+						for (i = 0, len = feat.length; i < len; i++) {
+							tableData.push({
+								"id": feat[i].id,
+								"mag": feat[i].properties.mag,
+								"title": feat[i].properties.title,
+								"lon": feat[i].geometry.coordinates[0],
+								"lat": feat[i].geometry.coordinates[1]
+							});
+						}
+					}
+
+					if (table.tableInfo.id == "Values") {
+						for (i = 0, len = feat.length; i < len; i++) {
+							tableData.push({
+								"id": feat[i].id,
+								"url": feat[i].properties.url,
+								"time": new Date(feat[i].properties.time) // Convert to a date format from epoch time
+							});
+						}
+					}
+
+					table.appendRows(tableData);
+					doneCallback();				
+				}
+
+				$.post( restendpoint , data, ajax_success, "json" );
+			};
+			
+			
+
+			tableau.registerConnector(myConnector);
+		
+			myConnector.getData("abc",null);
+		
+		
+		
+			datepicker_options = {
+				changeMonth: true,
+				changeYear: true,
+				showButtonPanel: true,
+				dateFormat: "yy-mm-dd"
+			};
+
+			$( "#StartDate" ).datepicker(datepicker_options);
+			$( "#EndDate" ).datepicker(datepicker_options);
+			
+			
+			
+			$("#submitButton").click(function() {
+
+				var data = {
+					startDate: $('#StartDate').val().trim(),
+					endDate: $('#EndDate').val().trim(),
+					queries: ['EWS.Bal_Opening.ES']
+				};
+
+				console.log(JSON.stringify(data));
+				tableau.connectionData = JSON.stringify(data);
+				tableau.connectionName = "ESM Data Link";
+				tableau.submit();
+
+			});
+			
+		} );
+		function loadClipboard() {
+		
+			return 0;
+			navigator.clipboard.readText()
+				.then(text => {
+					console.log('Pasted content: ', text);
+				});
+		}
+		
+
+	</script>
+</head>
+
+<body>
+	<p>StartDate: <input type="text" id="StartDate"></p>
+	<p>EndDate: <input type="text" id="EndDate"></p>
+
+	<button type="button" onclick="loadClipboard()">load series from clipboard</button>
+	<button type="submit" id = "submitButton">Go</button>
+    <div class="container container-table">
+        <div class="row vertical-center-row">
+            <div class="text-center col-md-4 col-md-offset-4">
+                <button type = "button" id = "submitButton" class = "btn btn-success" style = "margin: 10px;">Get Earthquake Data!</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
