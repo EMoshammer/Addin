@@ -54,7 +54,7 @@
 			
 				var res = {id: "Series", alias: "Series Data", columns: []};
 				for (var i=0; i<d.queries.length; i++) {
-					res.columns.push({id: d.queries[i].header, datatype:d.queries[i].datatype});
+					res.columns.push({id: d.queries[i].header, dataType:d.queries[i].datatype});
 				}
 			
 				schemaCallback([res]);
@@ -127,7 +127,7 @@
 <br>
 
 <b>Series selection</b><br>
-	<div id="queriesgrid" style="height: 500px; width:700px;" class="ag-theme-alpine"></div>
+	<div id="queriesgrid" style="height: 400px; width:700px;" class="ag-theme-alpine"></div>
 
 	<button type="button" id="btndelete">Delete selection</button>
 	<button type="button" id="btnaddseries">New series</button>
@@ -138,7 +138,7 @@
 </div>
 
 <div id="dlgpreview" title="Preview">
-	<div id="previewgrid" style="height: 500px; width:700px;" class="ag-theme-alpine"></div>
+	<div id="previewgrid" style="height: 400px; width:700px;" class="ag-theme-alpine"></div>
 </div>
 
 <div id="dlgaddseries" title="Add new series">
