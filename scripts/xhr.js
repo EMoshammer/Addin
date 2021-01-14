@@ -291,9 +291,9 @@ function xhr_loader (requests, rerun) {
 		
 		r.state = xhr_readystate.UNSENT;
 		r.dep = {};
-		r.dep[request_id] = 1;
+		r.dep[request_id] = request_id;
 		r.ts = NEW_ERROR(err_type.async);
-		requests[request_id].xhr[r.id] = 1;
+		requests[request_id].xhr[r.id] = r.id;
 		
 		series_cache[r.id] = r;
 		
