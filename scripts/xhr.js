@@ -54,7 +54,7 @@ function xhr_loader (requests, rerun) {
 				return { source: 'ECB', db: r[1], code: r[2], id: a.toUpperCase(), txt: a };
 			},
 			get : function (d) {
-				return 'http://sdw-wsrest.ecb.europa.eu/service/data/' + d.db + '/' + d.code;
+				return 'https://sdw-wsrest.ecb.europa.eu/service/data/' + d.db + '/' + d.code;
 			},
 			onload : function (xhr, response) {
 				var seriesobj = NEW_EMPTY_TS();
@@ -121,7 +121,7 @@ function xhr_loader (requests, rerun) {
 				return { source: 'ESTAT', code: r[2], db: r[1], id: a.toUpperCase(), txt: a };
 			},
 			get : function (d) {
-				return 'http://ec.europa.eu/eurostat/SDMX/diss-web/rest/data/'+d.db+'/'+d.code;
+				return 'https://ec.europa.eu/eurostat/SDMX/diss-web/rest/data/'+d.db+'/'+d.code;
 			},
 			onload : function (xhr, response) {
 				let series = new window.DOMParser().parseFromString(response, 'text/xml').querySelectorAll('GenericData DataSet Series')[0];
