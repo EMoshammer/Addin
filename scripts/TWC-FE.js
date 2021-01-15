@@ -195,7 +195,7 @@ function setupFE() {
 			if (typeof rowNode.data.value.data[0][0] === 'string' || rowNode.data.value.data[0][0] instanceof String) d_type = tableau.dataTypeEnum.string;
 			
 			if (rowNode.data.state != 'error') {
-				data.queries.push({header: rowNode.data.header, query: rowNode.data.query, datatype: d_type});
+				data.queries.push({header: rowNode.data.header, queryDisplay: rowNode.data.queryDisplay, datatype: d_type});
 			}
 		});
 
