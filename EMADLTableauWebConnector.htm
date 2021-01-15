@@ -70,8 +70,6 @@
 		
 			// Create the connector object
 			myConnector = tableau.makeConnector();
-			
-			if (tableau.connectionData) loadFromConnectionData(tableau.connectionData);
 
 			// Define the schema
 			myConnector.getSchema = function(schemaCallback) {
@@ -102,6 +100,8 @@
 			
 
 			tableau.registerConnector(myConnector);
+			
+			if (tableau.connectionData) loadFromConnectionData(tableau.connectionData);
 			
 			
 			function loadFromConnectionData(connData) {
