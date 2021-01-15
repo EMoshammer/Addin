@@ -77,17 +77,23 @@
 							}
 						}
 						table.appendRows(tableData);
-						doneCallback();			
+						doneCallback();
 					}
 				}
 				
 				var d = JSON.parse(tableau.connectionData);
+				for (var i=0; i<d.queries.length; i++) {
+					d.queries[i].query = getQuery(d.queries[i].queryDisplay, d.StartDate, d.EndDate, d.region);
+				}
+				
 				var DLfinal = new DataLayer(d.queries, finalreport, {freq: d.freq});
 			
 			};
 			
 
 			tableau.registerConnector(myConnector);
+			
+			setupFE();
 		
 		});
 
