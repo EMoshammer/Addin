@@ -56,7 +56,7 @@ function getQuery(queryDisplay, StartDate, EndDate, country) {
 	
 function setupFE() {
 
-	var isdebug = 1;
+	var isdebug = 0;
 	if (isdebug) doneCallback = function(a) {alert(JSON.stringify(a));}
 
 	// ui panel-setting
