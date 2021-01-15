@@ -98,12 +98,18 @@
 				}
 			};
 			
+			myConnector.init = function(done){
+				doneCallback = done;
+				if (tableau.connectionData) {
+					loadFromConnectionData(tableau.connectionData);
+				} else {
+					done();
+				}
+			};
 
 			tableau.registerConnector(myConnector);
 			
-			if (tableau.connectionData) loadFromConnectionData(tableau.connectionData);
-			
-			
+
 			function loadFromConnectionData(connData) {
 				var d = JSON.parse(connData);
 				
