@@ -67,6 +67,8 @@
 			// Download the data
 			myConnector.getData = function(table, done) {
 			
+				loadFromConnectionData(tableau.connectionData);
+			
 				doneCallback = function(x) {
 					table.appendRows(x);
 					done();
