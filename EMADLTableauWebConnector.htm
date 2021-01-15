@@ -53,8 +53,7 @@
 		
 			setupFE();
 			
-			if (!tableau.connectionData) {
-				tableau.connectionData = JSON.stringify({
+			loadFromConnectionData(JSON.stringify({
 					freq: 'A',
 					region: ['FR','AT'],
 					//region: [],
@@ -67,13 +66,12 @@
 						//{header: 'GDP', queryDisplay: 'ECB:AME.A.AUT.1.0.0.0.OVGD', datatype: tableau.dataTypeEnum.float},
 						//{header: 'aaa', queryDisplay: 'ECB:AME.A.AUT.1.0.0.0.OVGD+1', datatype: tableau.dataTypeEnum.float},
 					]
-				});
-			}
-			
-			loadFromConnectionData(tableau.connectionData);
+				}));
 		
 			// Create the connector object
 			myConnector = tableau.makeConnector();
+			
+			if (tableau.connectionData) loadFromConnectionData(tableau.connectionData);
 
 			// Define the schema
 			myConnector.getSchema = function(schemaCallback) {
