@@ -85,25 +85,16 @@
 		
 			// Download the data
 			myConnector.getData = function(table, done) {
-			
-				loadFromConnectionData(tableau.connectionData);
-			
-				doneCallback = function(x) {
-					table.appendRows(x);
-					done();
-				}
-			
-				if (resultData !== null) {
-					doneCallback(resultData);
-				}
+				table.appendRows(resultData);
+				done();
 			};
 			
 			myConnector.init = function(done){
-				doneCallback = done;
+				doneCallback = function() {doneCallback = function () {}; done()};
 				if (tableau.connectionData) {
 					loadFromConnectionData(tableau.connectionData);
 				} else {
-					done();
+					doneCallback();
 				}
 			};
 
@@ -128,6 +119,8 @@
 				}
 				
 				DL.addRequests(d.queries);
+				
+				if (d.queries.length == 0) doneCallback();
 			}
 
 		});
