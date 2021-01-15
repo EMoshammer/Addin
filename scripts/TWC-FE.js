@@ -1,6 +1,6 @@
 $( function() {
 
-	var isdebug = 1;
+	var isdebug = 0;
 
 	// ui panel-setting
 
