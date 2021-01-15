@@ -218,6 +218,21 @@ function setupFE() {
 		if (r.state == 'error') statehint = r.data;
 		r.statehint = statehint;
 		gridOptions.api.getRowNode(r.gridrow.id).setDataValue('state', r.state);
+		
+		if (!status.progress) {
+		
+			resultData = [];
+			gridOptions.api.forEachNodeAfterFilterAndSort(function (z, index) {
+				for (var j=0; j<z.data.value.data.length; j++) {
+					if (resultData[j] == undefined) resultData[j] = {};
+					var v = z.data.value.data[j][0];
+					if (v instanceof Date) v = v.toISOString().split('T')[0];
+					resultData[j][z.data.header] = v;
+				}
+			});
+			
+			doneCallback(resultData);
+		}
 	}
 	
 	var DL = new DataLayer([], report);
@@ -226,12 +241,15 @@ function setupFE() {
 		tableau.connectionData = JSON.stringify({
 			freq: 'A',
 			region: ['FR','AT'],
+			//region: [],
 			StartDate: '2010',
 			EndDate: '2020',
 			queries: [
 				{header: 'Country', queryDisplay: '"$a2$"', datatype: tableau.dataTypeEnum.string},
 				{header: 'Date', queryDisplay: 'date', datatype: tableau.dataTypeEnum.date},
 				{header: 'GDP', queryDisplay: 'ECB:AME.A.$a3$.1.0.0.0.OVGD', datatype: tableau.dataTypeEnum.float},
+				//{header: 'GDP', queryDisplay: 'ECB:AME.A.AUT.1.0.0.0.OVGD', datatype: tableau.dataTypeEnum.float},
+				//{header: 'aaa', queryDisplay: 'ECB:AME.A.AUT.1.0.0.0.OVGD+1', datatype: tableau.dataTypeEnum.float},
 			]
 		});
 	}
