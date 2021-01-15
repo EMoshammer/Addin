@@ -75,32 +75,6 @@
 				if (resultData !== null) {
 					doneCallback(resultData);
 				}
-			
-				if (false) {
-				function finalreport(status, r) {
-					if (!status.progress) {
-					
-						var tableData = [];
-						for (var i=0; i<d.queries.length; i++) {
-							for (var j=0; j<d.queries[i].value.data.length; j++) {
-								if (tableData[j] == undefined) tableData[j] = {};
-								var v = d.queries[i].value.data[j][0];
-								if (v instanceof Date) v = v.toISOString().split('T')[0];
-								tableData[j][d.queries[i].header] = v;
-							}
-						}
-						table.appendRows(tableData);
-						doneCallback();
-					}
-				}
-				
-				var d = JSON.parse(tableau.connectionData);
-				for (var i=0; i<d.queries.length; i++) {
-					d.queries[i].query = getQuery(d.queries[i].queryDisplay, d.StartDate, d.EndDate, d.region);
-				}
-				
-				var DLfinal = new DataLayer(d.queries, finalreport, {freq: d.freq});
-				}
 			};
 			
 
