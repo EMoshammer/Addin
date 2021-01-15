@@ -284,9 +284,9 @@ function xhr_loader (requests, rerun) {
 				requests[request_id].xhr[r.id] = 1;
 			} else {
 				var freq = GETATTR(c.ts, 'freq');
-				if (freq) return TS_CONVFREQ(c.ts, freq, env.freq);
+				if (freq) return TS_CONVFREQ(cloneObj(c.ts), freq, env.freq);
 			}
-			return c.ts;
+			return cloneObj(c.ts);
 		}
 		
 		r.state = xhr_readystate.UNSENT;

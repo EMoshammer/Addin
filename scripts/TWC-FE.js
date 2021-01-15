@@ -227,8 +227,7 @@ $( function() {
 		});
 	}
 	
-	
-	
+
 	function loadFromConnectionData(connData) {
 		var d = JSON.parse(connData);
 		
