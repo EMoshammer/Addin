@@ -174,6 +174,9 @@ $( function() {
 
 		var data = {
 			freq: $('#freq').val().trim(),
+			region: $('#region').val(),
+			StartDate: $('#StartDate').val(),
+			EndDate: $('#EndDate').val(),
 			queries: []
 		};
 		
@@ -182,9 +185,9 @@ $( function() {
 			if (rowNode.data.value.data[0][0] instanceof Date) d_type = tableau.dataTypeEnum.date;
 			if (typeof rowNode.data.value.data[0][0] === 'string' || rowNode.data.value.data[0][0] instanceof String) d_type = tableau.dataTypeEnum.string;
 			
-			//if (rowNode.data.state != 'error') {
+			if (rowNode.data.state != 'error') {
 				data.queries.push({header: rowNode.data.header, query: rowNode.data.query, datatype: d_type});
-			//}
+			}
 		});
 
 		tableau.connectionData = JSON.stringify(data);
@@ -207,12 +210,40 @@ $( function() {
 		r.statehint = statehint;
 		gridOptions.api.getRowNode(r.gridrow.id).setDataValue('state', r.state);
 	}
-
+	
 	var DL = new DataLayer([], report);
 
-	addSingle(null, 'Country','"$a2$"');
-	addSingle(null, 'Date','date');
-	addSingle(null, 'GDP','ECB:AME.A.$a3$.1.0.0.0.OVGD');
+	if (!tableau.connectionData) {
+		tableau.connectionData = JSON.stringify({
+			freq: 'A',
+			region: ['FR','AT'],
+			StartDate: '2010',
+			EndDate: '2020',
+			queries: [
+				{header: 'Country', queryDisplay: '"$a2$"', datatype: tableau.dataTypeEnum.string},
+				{header: 'Date', queryDisplay: 'date', datatype: tableau.dataTypeEnum.date},
+				{header: 'GDP', queryDisplay: 'ECB:AME.A.$a3$.1.0.0.0.OVGD', datatype: tableau.dataTypeEnum.float},
+			]
+		});
+	}
+	
+	
+	
+	function loadFromConnectionData(connData) {
+		var d = JSON.parse(connData);
+		
+		$('#freq').val(d.freq);
+		$('#StartDate').val(d.StartDate);
+		$('#EndDate').val(d.EndDate);
+		$('#region').multiselect('select', d.region);
+		
+		for (var i=0; i<d.queries.length; i++) {
+			addSingle(null, d.queries[i].header, d.queries[i].queryDisplay);
+		}
+	}
+	
+	loadFromConnectionData(tableau.connectionData);
+	
 
 	function update_preview() {
 
@@ -240,6 +271,14 @@ $( function() {
 
 	}
 
+	function getQuery(queryDisplay, StartDate, EndDate, country) {
+		var query = 'ts2mat('+queryDisplay+','+StartDate+','+EndDate+')';
+		if (country.length) {
+			query = 'stack('+query+', "country", '+JSON.stringify(country)+')';
+		}
+		return query;
+	}
+
 	function updateAll() {
 		gridOptions.api.forEachNode(function(rowNode, index) {
 			addSingle(rowNode.data, rowNode.data.header, rowNode.data.queryDisplay);
@@ -247,27 +286,21 @@ $( function() {
 	}
 
 	function addSingle(old, header, queryDisplay) {
-		var query = queryDisplay;
-
-		country = $('#region').val()
 
 		DL.env.freq = $('#freq').val();
-		var query = 'ts2mat('+queryDisplay+','+$('#StartDate').val()+','+$('#EndDate').val()+')';
 
-		if (country.length) {
-			query = 'stack('+query+', "country", '+JSON.stringify(country)+')';
-		}
+		var query = getQuery(queryDisplay, $('#StartDate').val(), $('#EndDate').val(), $('#region').val());
 
 		if (old) {
 			old.header = header;
 			old.queryDisplay = queryDisplay;
 			old.query = query;
-			gridOptions.api.applyTransaction({update: [old] });
+			gridOptions.api.applyTransaction({update: [old]});
 			old.ast = null;
 			DL.updateRequests([old.id]);
 		} else {
 			var q = {header: header, queryDisplay: queryDisplay, query:query, state:'progress'};
-			q.gridrow = gridOptions.api.applyTransaction({add: [q] }).add[0];
+			q.gridrow = gridOptions.api.applyTransaction({add: [q]}).add[0];
 			DL.addRequests([q]);
 		}
 	}
