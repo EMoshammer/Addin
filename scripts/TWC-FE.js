@@ -1,6 +1,6 @@
 $( function() {
 
-	var isdebug = false;
+	var isdebug = 1;
 
 	// ui panel-setting
 
@@ -180,16 +180,18 @@ $( function() {
 		gridOptions.api.forEachNode(function(rowNode, index) {
 			var d_type = tableau.dataTypeEnum.float;
 			if (rowNode.data.value.data[0][0] instanceof Date) d_type = tableau.dataTypeEnum.date;
-			if (rowNode.data.value.data[0][0] instanceof String) d_type = tableau.dataTypeEnum.string;
+			if (typeof rowNode.data.value.data[0][0] === 'string' || rowNode.data.value.data[0][0] instanceof String) d_type = tableau.dataTypeEnum.string;
 			
-			data.queries.push({header: rowNode.data.header, query: rowNode.data.query, datatype: d_type});
+			//if (rowNode.data.state != 'error') {
+				data.queries.push({header: rowNode.data.header, query: rowNode.data.query, datatype: d_type});
+			//}
 		});
 
 		tableau.connectionData = JSON.stringify(data);
 		tableau.connectionName = "EMA Data Layer";
 		
 		if (isdebug) {
-			//myConnector.getSchema(function(a) {alert(JSON.stringify(a));});
+			myConnector.getSchema(function(a) {alert(JSON.stringify(a));});
 			var t = {appendRows: function(a) {alert(JSON.stringify(a));} };
 			myConnector.getData(t, function() {});
 		} else {
@@ -204,7 +206,6 @@ $( function() {
 		if (r.state == 'error') statehint = r.data;
 		r.statehint = statehint;
 		gridOptions.api.getRowNode(r.gridrow.id).setDataValue('state', r.state);
-		//gridOptions.api.getRowNode(r.gridrow.id).setDataValue('statehint', statehint);
 	}
 
 	var DL = new DataLayer([], report);
