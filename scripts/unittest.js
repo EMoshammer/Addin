@@ -5,6 +5,8 @@ function unittest(t, report) {
 
 	var tests_xhr = [
 		//ECB test
+		{query: "stack(ts2mat(ECB:AME.A.$a3$.1.0.0.0.OVGD,2000), '$a3$', ['AUT', 'BEL'])", assert: {"type":"mat","data":[[280.4766,329.6142]]}},
+		{query: "stack(ts2mat(ECB:AME.A.$a3$.1.0.0.0.OVGD,2000), '$country$', ['AT', 'BE'])", assert: {"type":"mat","data":[[280.4766,329.6142]]}},
 		{query: "ts2mat(ECB:AME.A.AUT.1.0.0.0.OVGD,2013)", 				assert: {"type":"mat","data":[[338.5728]]}, env: {freq:'A'} },
 		{query: "ts2mat(ECB:AME.A.AUT.1.0.0.0.OVGD,2013)", 				assert: {"type":"error","data":"xhr: Frequency mismatch!"}, env: {freq:'Q'} },
 		{query: "ts2mat(ECB:BLS.Q.AT.ALL.BC.E.LE.B3.ST.S.DINX,2013)", 	assert: {"type":"mat","data":[[0],[-7.142857074737549],[0],[0]]}, env: {freq:'Q'} },

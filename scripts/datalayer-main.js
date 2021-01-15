@@ -15,7 +15,6 @@ TODO:
 		Stack
 		Attributes
 		OfficeJs
-		Tableau
 		DL prep
 		ie test
 */
@@ -51,8 +50,9 @@ function DataLayer(req, callback, env) {
 	}
 	
 	function rerun(ids) {
-		for (var z in ids) {
-			var i = ids[z];
+		for (var i in ids) {
+			if (ids instanceof Array) i = ids[i];
+				
 			var req = requests[i];
 			
 			if (req.state != 'progress') {

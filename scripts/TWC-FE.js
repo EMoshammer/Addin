@@ -30,15 +30,15 @@ $( function() {
 		});
 	});
 
-	$('#region').multiselect({enableFiltering:true,enableClickableOptGroups:true,enableCaseInsensitiveFiltering:true,maxHeight:300,});
-
+	$('#region').multiselect({enableFiltering:true,enableClickableOptGroups:true,enableCaseInsensitiveFiltering:true,maxHeight:300,}).change(updateAll);
 		
 	// grids
 		
 	var columnDefs = [
 		{ field: "header", rowDrag: true, editable: true, tooltipField: 'header', width: 180},
 		{ field: "queryDisplay", editable: true, tooltipField: 'queryDisplay', cellEditor: 'agLargeTextCellEditor', width: 400 },
-		{ field: "state", width: 80,
+		{ field: "state", width: 80, tooltipValueGetter: function (a) {
+			return (a.value=='error' ? a.data.value.data : '');	},
 			cellRendererSelector: function(params) {
 				return {
 					component: 'statusCellRenderer',
@@ -126,7 +126,7 @@ $( function() {
 
 	dlgpreview = $( "#dlgpreview" ).dialog({
 		autoOpen: false,
-		height: 640,
+		height: 540,
 		width: 740,
 		modal: true,
 		buttons: {
@@ -200,13 +200,18 @@ $( function() {
 	
 	// series management
 	report = function(status, r) {
+		var statehint = ''
+		if (r.state == 'error') statehint = r.data;
+		r.statehint = statehint;
 		gridOptions.api.getRowNode(r.gridrow.id).setDataValue('state', r.state);
+		//gridOptions.api.getRowNode(r.gridrow.id).setDataValue('statehint', statehint);
 	}
 
 	var DL = new DataLayer([], report);
 
-	addSingle(null, 'Year','year');
-	addSingle(null, 'GDP','ECB:AME.A.AUT.1.0.0.0.OVGD');
+	addSingle(null, 'Country','"$a2$"');
+	addSingle(null, 'Date','date');
+	addSingle(null, 'GDP','ECB:AME.A.$a3$.1.0.0.0.OVGD');
 
 	function update_preview() {
 
@@ -243,8 +248,14 @@ $( function() {
 	function addSingle(old, header, queryDisplay) {
 		var query = queryDisplay;
 
+		country = $('#region').val()
+
 		DL.env.freq = $('#freq').val();
 		var query = 'ts2mat('+queryDisplay+','+$('#StartDate').val()+','+$('#EndDate').val()+')';
+
+		if (country.length) {
+			query = 'stack('+query+', "country", '+JSON.stringify(country)+')';
+		}
 
 		if (old) {
 			old.header = header;

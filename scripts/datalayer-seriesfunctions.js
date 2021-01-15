@@ -48,6 +48,8 @@ err_type = {
 var import_functions = {
 
 	STACK : function STACK (func, obj, iter, dim) {
+		
+		if (dim == undefined) dim = 1;
 
 		if (env.iter[obj] !== undefined) {
 			return NEW_ERROR(err_type.duplrepl, 'stack');
@@ -60,7 +62,7 @@ var import_functions = {
 			var r = (i==0) ? func() : CONCAT(r, func(), dim);
 		}
 		
-		SETENVITER(obj, null);
+		SETENVITER(obj, undefined);
 		
 		return r;
 	},
@@ -129,8 +131,8 @@ var import_functions = {
 
 	},
 
-	applyReplacement : function (a, iter) {
-		var envIter = env.iter;
+	STRREPLACE : function (a, old_code, new_code) {
+		return a.replace(old_code, new_code);
 	},
 	
 	IDENT : function (a) {
@@ -138,6 +140,10 @@ var import_functions = {
 		if (env.strict) {
 			return NEW_ERROR(err_type.unknident, 'ident', a);
 		} else {
+			
+			for (var iter in env.iter) {
+				a = STRREPLACE(a, iter, env.iter[iter]);
+			}
 			
 			var r = XHR_PROBE(a);
 			if (r) return r;
@@ -160,6 +166,9 @@ var import_functions = {
 		if (a instanceof Date) {
 			return NEW_DATE(a);
 		} else if (typeof a === 'string' || a instanceof String) {
+			for (var iter in env.iter) {
+				a = STRREPLACE(a, iter, env.iter[iter]);
+			}
 			return NEW_TEXT(a);		
 		} else {
 			return NEW_SCALAR(a);
@@ -319,10 +328,19 @@ var import_functions = {
 		obj = GETDATA(obj);
 		iter = GETDATA(iter);
 		var envIter = env.iter;
-		
-		if (iter) 	envIter[obj] = iter;
-		else		delete envIter[obj];
 
+		if (obj.toUpperCase() == 'COUNTRY') {
+			var c = countrycodes[iter || 'AT'];
+			for (i in c) {
+				if (iter) 	envIter[i] = c[i];
+				else		delete envIter[i];
+			}
+		} else {
+			if (iter) 	envIter[obj] = iter;
+			else		delete envIter[obj];
+		}
+		
+		setProp(getPropNative(null,'env'), 'iter', envIter);
 	},
 
 	TS_CONVFREQ: function (ts, freq_old, freq_new) {
@@ -749,6 +767,7 @@ import_list = [
 	{ name: 'SETENVFREQ', func : import_functions.setEnvFreq }, 
 	{ name: 'SETENV', 	func : import_functions.setEnv }, 
 	
+	{ name: 'STRREPLACE',func : import_functions.STRREPLACE }, 
 	{ name: 'YEAR', 	func : import_functions.YEAR },
 	
 	{ name: 'FORMAT', 	func : import_functions.FORMAT }, 
