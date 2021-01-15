@@ -1,12 +1,4 @@
 
-function getQuery(queryDisplay, StartDate, EndDate, country) {
-	var query = 'ts2mat('+queryDisplay+','+StartDate+','+EndDate+')';
-	if (country.length) {
-		query = 'stack('+query+', "country", '+JSON.stringify(country)+')';
-	}
-	return query;
-}
-
 function setupFE() {
 
 	var isdebug = 0;
@@ -213,6 +205,15 @@ function setupFE() {
 	});
 	
 	// series management
+	
+	function getQuery(queryDisplay, StartDate, EndDate, country) {
+		var query = 'ts2mat('+queryDisplay+','+StartDate+','+EndDate+')';
+		if (country.length) {
+			query = 'stack('+query+', "country", '+JSON.stringify(country)+')';
+		}
+		return query;
+	}
+	
 	report = function(status, r) {
 		var statehint = ''
 		if (r.state == 'error') statehint = r.data;
@@ -262,16 +263,21 @@ function setupFE() {
 		$('#EndDate').val(d.EndDate);
 		$('#region').multiselect('select', d.region);
 		
+		gridOptions.api.setRowData([]);
+		
+		DL.env.freq = d.freq;
+
 		for (var i=0; i<d.queries.length; i++) {
-			addSingle(null, d.queries[i].header, d.queries[i].queryDisplay);
+			d.queries[i].query = getQuery(d.queries[i].queryDisplay, d.StartDate, d.EndDate, d.region);
+			d.queries[i].gridrow = gridOptions.api.applyTransaction({add: [d.queries[i]]}).add[0];
 		}
+		
+		DL.addRequests(d.queries);
 	}
 	
 	loadFromConnectionData(tableau.connectionData);
 	
-	//var t = {appendRows: function(a) {alert(JSON.stringify(a));} };
-	//myConnector.getData(t, function() {});
-
+	//doneCallback = function(a) {alert(JSON.stringify(a));}
 
 	function update_preview() {
 
