@@ -43,6 +43,9 @@
 	
 	<script type="text/javascript">
 		var myConnector = null;
+		
+		var resultData = null;
+		var doneCallback = function() {};
 	
 		$( function() {
 		
@@ -62,8 +65,18 @@
 			};
 		
 			// Download the data
-			myConnector.getData = function(table, doneCallback) {
+			myConnector.getData = function(table, done) {
 			
+				doneCallback = function(x) {
+					table.appendRows(x);
+					done();
+				}
+			
+				if (resultData !== null) {
+					doneCallback(resultData);
+				}
+			
+				if (false) {
 				function finalreport(status, r) {
 					if (!status.progress) {
 					
@@ -87,7 +100,7 @@
 				}
 				
 				var DLfinal = new DataLayer(d.queries, finalreport, {freq: d.freq});
-			
+				}
 			};
 			
 
