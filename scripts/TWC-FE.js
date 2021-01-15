@@ -1,4 +1,13 @@
-$( function() {
+
+function getQuery(queryDisplay, StartDate, EndDate, country) {
+	var query = 'ts2mat('+queryDisplay+','+StartDate+','+EndDate+')';
+	if (country.length) {
+		query = 'stack('+query+', "country", '+JSON.stringify(country)+')';
+	}
+	return query;
+}
+
+function setupFE() {
 
 	var isdebug = 0;
 
@@ -194,7 +203,7 @@ $( function() {
 		tableau.connectionName = "EMA Data Layer";
 		
 		if (isdebug) {
-			myConnector.getSchema(function(a) {alert(JSON.stringify(a));});
+			//myConnector.getSchema(function(a) {alert(JSON.stringify(a));});
 			var t = {appendRows: function(a) {alert(JSON.stringify(a));} };
 			myConnector.getData(t, function() {});
 		} else {
@@ -226,7 +235,6 @@ $( function() {
 			]
 		});
 	}
-	
 
 	function loadFromConnectionData(connData) {
 		var d = JSON.parse(connData);
@@ -243,6 +251,9 @@ $( function() {
 	
 	loadFromConnectionData(tableau.connectionData);
 	
+	//var t = {appendRows: function(a) {alert(JSON.stringify(a));} };
+	//myConnector.getData(t, function() {});
+
 
 	function update_preview() {
 
@@ -270,13 +281,6 @@ $( function() {
 
 	}
 
-	function getQuery(queryDisplay, StartDate, EndDate, country) {
-		var query = 'ts2mat('+queryDisplay+','+StartDate+','+EndDate+')';
-		if (country.length) {
-			query = 'stack('+query+', "country", '+JSON.stringify(country)+')';
-		}
-		return query;
-	}
 
 	function updateAll() {
 		gridOptions.api.forEachNode(function(rowNode, index) {
@@ -304,4 +308,4 @@ $( function() {
 		}
 	}
 	
-});
+}

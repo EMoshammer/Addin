@@ -436,7 +436,7 @@ var import_functions = {
 	DATE2INDEX_HELPER: function (d, freq) {
 		switch (freq.toUpperCase()) {
 			case 'A': return d.getFullYear();
-			case 'H': return d.getFullYear() * 2 + Math.floor(d.getMonth()/6);
+			case 'S': return d.getFullYear() * 2 + Math.floor(d.getMonth()/6);
 			case 'Q': return d.getFullYear() * 4 + Math.floor(d.getMonth()/3);
 			case 'M': return d.getFullYear() * 12 + d.getMonth();
 			case 'W': return Math.floor((d.getTime() / (24 * 60 * 60 * 1000) - (d.getDay()+6)%7 ) / 7);
@@ -454,7 +454,7 @@ var import_functions = {
 		if (freq == undefined) freq = env.freq;
 		switch (freq.toUpperCase()) {
 			case 'A': return new Date(env.tsdt_min.getFullYear()+i,11,31);
-			case 'H': return new Date(env.tsdt_min.getFullYear(), Math.floor(env.tsdt_min.getMonth()/6 + i+1)*6, 0);
+			case 'S': return new Date(env.tsdt_min.getFullYear(), Math.floor(env.tsdt_min.getMonth()/6 + i+1)*6, 0);
 			case 'Q': return new Date(env.tsdt_min.getFullYear(), Math.floor(env.tsdt_min.getMonth()/3 + i+1)*3, 0);
 			case 'M': return new Date(env.tsdt_min.getFullYear(), env.tsdt_min.getMonth() + i+1, 0);
 			case 'W': return new Date(((DATE2INDEX_HELPER(env.tsdt_min, 'W') + i) * 7 + 10) * (24 * 60 * 60 * 1000));

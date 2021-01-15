@@ -319,7 +319,11 @@ function xhr_loader (requests, rerun) {
 					var callback_done = function(ts) {
 						c.state = xhr_readystate.DONE;
 						c.ts = ts;
-						rerun(c.dep);
+						
+						for (var i in c.dep) {
+							delete requests[i].xhr[c.id];
+							if (Object.keys(requests[i].xhr).length === 0) rerun([i]);
+						}
 					}
 					
 					c.xhr = new XMLHttpRequest();
