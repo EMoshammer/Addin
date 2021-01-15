@@ -1,7 +1,63 @@
+var columnDefs = [
+	{ field: "header", rowDrag: true, editable: true, tooltipField: 'header', width: 180},
+	{ field: "queryDisplay", editable: true, tooltipField: 'queryDisplay', cellEditor: 'agLargeTextCellEditor', width: 400 },
+	{ field: "state", width: 80, tooltipValueGetter: function (a) {
+		return (a.value=='error' ? a.data.value.data : '');	},
+		cellRendererSelector: function(params) {
+			return {
+				component: 'statusCellRenderer',
+				params: { values: ['success', 'error', 'progress'] }
+			};
+		}
+	}
+];
 
+function StatusCellRenderer() {}
+StatusCellRenderer.prototype.init = function(params) {
+	this.eGui = document.createElement('span');
+	if (params.value !== "" || params.value !== undefined || params.value !== null) {
+		if (params.value == 'success') var icon = 'fas fa-check';
+		if (params.value == 'error') var icon = 'fas fa-exclamation';
+		if (params.value == 'progress') var icon = 'fas fa-spinner fa-pulse';
+		$(this.eGui).append( $("<div>", {style: 'padding: 8px; line-height: 25px;', "class": icon}) );
+	}
+};
+StatusCellRenderer.prototype.getGui = function() { return this.eGui; };
+
+var gridOptions = {
+	rowDragManaged: true,
+	enableMultiRowDragging: true,
+	rowSelection: 'multiple',
+	animateRows: true,
+	defaultColDef: { width: 170 },
+	columnDefs: columnDefs,
+	rowData: [],
+	enableBrowserTooltips: true,
+	components: { statusCellRenderer: StatusCellRenderer },
+	onCellEditingStopped: function (event) {
+		if (event.colDef.field == 'queryDisplay') {
+			addSingle(event.data, event.data.header, event.data.queryDisplay);
+		}
+	}
+};
+
+var gridOptionsPreview = {
+	columnDefs: [],
+	rowData: [],
+};
+
+function getQuery(queryDisplay, StartDate, EndDate, country) {
+	var query = 'ts2mat('+queryDisplay+','+StartDate+','+EndDate+')';
+	if (country.length) {
+		query = 'stack('+query+', "country", '+JSON.stringify(country)+')';
+	}
+	return query;
+}
+	
 function setupFE() {
 
-	var isdebug = 0;
+	var isdebug = 1;
+	if (isdebug) doneCallback = function(a) {alert(JSON.stringify(a));}
 
 	// ui panel-setting
 
@@ -34,54 +90,6 @@ function setupFE() {
 	$('#region').multiselect({enableFiltering:true,enableClickableOptGroups:true,enableCaseInsensitiveFiltering:true,maxHeight:300,}).change(updateAll);
 		
 	// grids
-		
-	var columnDefs = [
-		{ field: "header", rowDrag: true, editable: true, tooltipField: 'header', width: 180},
-		{ field: "queryDisplay", editable: true, tooltipField: 'queryDisplay', cellEditor: 'agLargeTextCellEditor', width: 400 },
-		{ field: "state", width: 80, tooltipValueGetter: function (a) {
-			return (a.value=='error' ? a.data.value.data : '');	},
-			cellRendererSelector: function(params) {
-				return {
-					component: 'statusCellRenderer',
-					params: { values: ['success', 'error', 'progress'] }
-				};
-			}
-		}
-	];
-
-	function StatusCellRenderer() {}
-	StatusCellRenderer.prototype.init = function(params) {
-		this.eGui = document.createElement('span');
-		if (params.value !== "" || params.value !== undefined || params.value !== null) {
-			if (params.value == 'success') var icon = 'fas fa-check';
-			if (params.value == 'error') var icon = 'fas fa-exclamation';
-			if (params.value == 'progress') var icon = 'fas fa-spinner fa-pulse';
-			$(this.eGui).append( $("<div>", {style: 'padding: 8px; line-height: 25px;', "class": icon}) );
-		}
-	};
-	StatusCellRenderer.prototype.getGui = function() { return this.eGui; };
-
-	var gridOptions = {
-		rowDragManaged: true,
-		enableMultiRowDragging: true,
-		rowSelection: 'multiple',
-		animateRows: true,
-		defaultColDef: { width: 170 },
-		columnDefs: columnDefs,
-		rowData: [],
-		enableBrowserTooltips: true,
-		components: { statusCellRenderer: StatusCellRenderer },
-		onCellEditingStopped: function (event) {
-			if (event.colDef.field == 'queryDisplay') {
-				addSingle(event.data, event.data.header, event.data.queryDisplay);
-			}
-		}
-	};
-
-	var gridOptionsPreview = {
-		columnDefs: [],
-		rowData: [],
-	};
 
 	var gridDiv = document.querySelector('#queriesgrid');
 	new agGrid.Grid(gridDiv, gridOptions);	
@@ -206,14 +214,6 @@ function setupFE() {
 	
 	// series management
 	
-	function getQuery(queryDisplay, StartDate, EndDate, country) {
-		var query = 'ts2mat('+queryDisplay+','+StartDate+','+EndDate+')';
-		if (country.length) {
-			query = 'stack('+query+', "country", '+JSON.stringify(country)+')';
-		}
-		return query;
-	}
-	
 	report = function(status, r) {
 		var statehint = ''
 		if (r.state == 'error') statehint = r.data;
@@ -236,48 +236,7 @@ function setupFE() {
 		}
 	}
 	
-	var DL = new DataLayer([], report);
-
-	if (!tableau.connectionData) {
-		tableau.connectionData = JSON.stringify({
-			freq: 'A',
-			region: ['FR','AT'],
-			//region: [],
-			StartDate: '2010',
-			EndDate: '2020',
-			queries: [
-				{header: 'Country', queryDisplay: '"$a2$"', datatype: tableau.dataTypeEnum.string},
-				{header: 'Date', queryDisplay: 'date', datatype: tableau.dataTypeEnum.date},
-				{header: 'GDP', queryDisplay: 'ECB:AME.A.$a3$.1.0.0.0.OVGD', datatype: tableau.dataTypeEnum.float},
-				//{header: 'GDP', queryDisplay: 'ECB:AME.A.AUT.1.0.0.0.OVGD', datatype: tableau.dataTypeEnum.float},
-				//{header: 'aaa', queryDisplay: 'ECB:AME.A.AUT.1.0.0.0.OVGD+1', datatype: tableau.dataTypeEnum.float},
-			]
-		});
-	}
-
-	function loadFromConnectionData(connData) {
-		var d = JSON.parse(connData);
-		
-		$('#freq').val(d.freq);
-		$('#StartDate').val(d.StartDate);
-		$('#EndDate').val(d.EndDate);
-		$('#region').multiselect('select', d.region);
-		
-		gridOptions.api.setRowData([]);
-		
-		DL.env.freq = d.freq;
-
-		for (var i=0; i<d.queries.length; i++) {
-			d.queries[i].query = getQuery(d.queries[i].queryDisplay, d.StartDate, d.EndDate, d.region);
-			d.queries[i].gridrow = gridOptions.api.applyTransaction({add: [d.queries[i]]}).add[0];
-		}
-		
-		DL.addRequests(d.queries);
-	}
-	
-	loadFromConnectionData(tableau.connectionData);
-	
-	//doneCallback = function(a) {alert(JSON.stringify(a));}
+	DL = new DataLayer([], report);
 
 	function update_preview() {
 
