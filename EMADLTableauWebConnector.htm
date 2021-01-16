@@ -49,7 +49,24 @@
 		
 		var DL;
 		var queries_data;
-	
+		
+		var default_query = {
+			freq: 'A',
+			region: ['FR','AT'],
+			//region: [],
+			StartDate: '2010',
+			EndDate: '2020',
+			queries: [
+				{header: 'Country', queryDisplay: '"$a2$"', datatype: tableau.dataTypeEnum.string},
+				{header: 'Date', queryDisplay: 'date', datatype: tableau.dataTypeEnum.date},
+				{header: 'GDP', queryDisplay: 'ECB:AME.A.$a3$.1.0.0.0.OVGD', datatype: tableau.dataTypeEnum.float},
+				//{header: 'GDP', queryDisplay: 'ECB:AME.A.AUT.1.0.0.0.OVGD', datatype: tableau.dataTypeEnum.float},
+				{header: 'aaa', queryDisplay: 'ECB:AME.A.$a3$.1.0.0.0.OVGD+1', datatype: tableau.dataTypeEnum.float},
+			]
+		};
+		
+		var isdebug = 1;
+
 		$( function() {
 				
 			// Create the connector object
@@ -57,11 +74,10 @@
 
 			// Define the schema
 			myConnector.getSchema = function(schemaCallback) {
-				var d = JSON.parse(tableau.connectionData);
-			
+		
 				var res = {id: "Series", alias: "Series Data", columns: []};
-				for (var i=0; i<d.queries.length; i++) {
-					res.columns.push({id: d.queries[i].header, dataType:d.queries[i].datatype});
+				for (var i=0; i<queries_data.queries.length; i++) {
+					res.columns.push({id: queries_data.queries[i].header, dataType:queries_data.queries[i].datatype});
 				}
 			
 				schemaCallback([res]);
@@ -76,25 +92,12 @@
 			myConnector.init = function(done){
 				if (tableau.phase == tableau.phaseEnum.gatherDataPhase) {
 					doneCallback = function() {doneCallback = function () {}; done()};
-					loadFromConnectionData(tableau.connectionData, true);
+					loadFromConnectionData(JSON.parse(tableau.connectionData), true);
 				} else {
 				
 					setupFE();
 					
-					loadFromConnectionData(JSON.stringify({
-							freq: 'A',
-							region: ['FR','AT'],
-							//region: [],
-							StartDate: '2010',
-							EndDate: '2020',
-							queries: [
-								{header: 'Country', queryDisplay: '"$a2$"', datatype: tableau.dataTypeEnum.string},
-								{header: 'Date', queryDisplay: 'date', datatype: tableau.dataTypeEnum.date},
-								{header: 'GDP', queryDisplay: 'ECB:AME.A.$a3$.1.0.0.0.OVGD', datatype: tableau.dataTypeEnum.float},
-								//{header: 'GDP', queryDisplay: 'ECB:AME.A.AUT.1.0.0.0.OVGD', datatype: tableau.dataTypeEnum.float},
-								//{header: 'aaa', queryDisplay: 'ECB:AME.A.AUT.1.0.0.0.OVGD+1', datatype: tableau.dataTypeEnum.float},
-							]
-						}), false);
+					loadFromConnectionData(default_query, false);
 				
 					done();
 				}
@@ -142,7 +145,7 @@
 			}
 
 			function loadFromConnectionData(connData, silent) {
-				var d = JSON.parse(connData);
+				var d = connData;
 				
 				queries_data = d;
 				
@@ -170,6 +173,19 @@
 					doneCallback();
 				}
 			}
+			
+			if (isdebug) {
+			
+				doneCallback = function(a) {alert(JSON.stringify(a));}
+			
+				tableau.phase = tableau.phaseEnum.gatherDataPhase;
+			
+				loadFromConnectionData(default_query, true);
+				
+				myConnector.getSchema(doneCallback);
+			
+			}
+	
 
 		});
 
