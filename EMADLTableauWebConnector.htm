@@ -44,7 +44,6 @@
 	<script type="text/javascript">
 		var myConnector = null;
 		
-		var resultData = null;
 		var doneCallback = function() {};
 		
 		var DL;
@@ -52,16 +51,13 @@
 		
 		var default_query = {
 			freq: 'A',
-			region: ['FR','AT'],
-			//region: [],
+			region: ['AT'],
 			StartDate: '2010',
 			EndDate: '2020',
 			queries: [
 				{header: 'Country', queryDisplay: '"$a2$"', datatype: tableau.dataTypeEnum.string},
 				{header: 'Date', queryDisplay: 'date', datatype: tableau.dataTypeEnum.date},
 				{header: 'GDP', queryDisplay: 'ECB:AME.A.$a3$.1.0.0.0.OVGD', datatype: tableau.dataTypeEnum.float},
-				//{header: 'GDP', queryDisplay: 'ECB:AME.A.AUT.1.0.0.0.OVGD', datatype: tableau.dataTypeEnum.float},
-				{header: 'aaa', queryDisplay: 'ECB:AME.A.$a3$.1.0.0.0.OVGD+1', datatype: tableau.dataTypeEnum.float},
 			]
 		};
 		
@@ -85,25 +81,39 @@
 		
 			// Download the data
 			myConnector.getData = function(table, done) {
+	
+				var resultData = [];
+				for (var i=0; i<queries_data.queries.length; i++) {
+					var z = queries_data.queries[i];
+					
+					if (z.state != 'error') {
+						
+						var d_type = tableau.dataTypeEnum.float;
+						if (z.value.data[0][0] instanceof Date) d_type = tableau.dataTypeEnum.date;
+						if (typeof z.value.data[0][0] === 'string' || z.value.data[0][0] instanceof String) d_type = tableau.dataTypeEnum.string;
+		
+						z.datatype = d_type;
+						
+						for (var j=0; j<z.value.data.length; j++) {
+							if (resultData[j] == undefined) resultData[j] = {};
+							var v = z.value.data[j][0];
+							if (v instanceof Date) v = v.toISOString().split('T')[0];
+							resultData[j][z.header] = v;
+						}
+					}
+				}
+			
 				table.appendRows(resultData);
 				done();
 			};
 			
 			myConnector.init = function(done){
 				if (tableau.phase == tableau.phaseEnum.gatherDataPhase) {
-					doneCallback = done();
-					
-					//setTimeout(function(){ 
-					
-						loadFromConnectionData(JSON.parse(tableau.connectionData), true);
-					
-					//}, 20000);
+					doneCallback = done;					
+					loadFromConnectionData(JSON.parse(tableau.connectionData), true);
 				} else {
-				
 					setupFE();
-					
 					loadFromConnectionData(default_query, false);
-				
 					done();
 				}
 			};
@@ -115,31 +125,7 @@
 			
 				if (tableau.phase == tableau.phaseEnum.gatherDataPhase) {
 					
-					if (!status.progress) {
-					
-						resultData = [];
-						for (var i=0; i<queries_data.queries.length; i++) {
-							var z = queries_data.queries[i];
-							
-							if (z.state != 'error') {
-								
-								var d_type = tableau.dataTypeEnum.float;
-								if (z.value.data[0][0] instanceof Date) d_type = tableau.dataTypeEnum.date;
-								if (typeof z.value.data[0][0] === 'string' || z.value.data[0][0] instanceof String) d_type = tableau.dataTypeEnum.string;
-				
-								z.datatype = d_type;
-								
-								for (var j=0; j<z.value.data.length; j++) {
-									if (resultData[j] == undefined) resultData[j] = {};
-									var v = z.value.data[j][0];
-									if (v instanceof Date) v = v.toISOString().split('T')[0];
-									resultData[j][z.header] = v;
-								}
-							}
-						}
-						
-						doneCallback(resultData);
-					}
+					if (!status.progress) doneCallback();
 
 				} else {
 					var statehint = ''
@@ -160,8 +146,6 @@
 				$('#region').multiselect('select', d.region);
 				
 				if (!silent) gridOptions.api.setRowData([]);
-				
-				//DL.env.freq = d.freq;
 
 				if (d.queries.length) {
 
@@ -171,8 +155,7 @@
 					}
 					
 					DL = new DataLayer(d.queries, report, {freq: d.freq});
-					
-					//DL.addRequests(d.queries);
+
 				} else {
 				
 					doneCallback();
