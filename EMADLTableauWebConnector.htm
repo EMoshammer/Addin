@@ -93,11 +93,11 @@
 				if (tableau.phase == tableau.phaseEnum.gatherDataPhase) {
 					doneCallback = done();
 					
-					setTimeout(function(){ 
+					//setTimeout(function(){ 
 					
 						loadFromConnectionData(JSON.parse(tableau.connectionData), true);
 					
-					}, 20000);
+					//}, 20000);
 				} else {
 				
 					setupFE();
