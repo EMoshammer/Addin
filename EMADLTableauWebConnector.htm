@@ -73,7 +73,21 @@
 		
 				var res = {id: "Series", alias: "Series Data", columns: []};
 				for (var i=0; i<queries_data.queries.length; i++) {
-					res.columns.push({id: queries_data.queries[i].header, dataType:queries_data.queries[i].datatype});
+				
+					var z = queries_data.queries[i];
+					
+					if (z.state != 'error') {
+						
+						var d_type = tableau.dataTypeEnum.float;
+						if (z.value.data[0][0] instanceof Date) d_type = tableau.dataTypeEnum.date;
+						if (typeof z.value.data[0][0] === 'string' || z.value.data[0][0] instanceof String) d_type = tableau.dataTypeEnum.string;
+		
+						z.datatype = d_type;
+						
+						res.columns.push({id: z.header, dataType:d_type});
+					}
+				
+					
 				}
 			
 				schemaCallback([res]);
@@ -87,12 +101,6 @@
 					var z = queries_data.queries[i];
 					
 					if (z.state != 'error') {
-						
-						var d_type = tableau.dataTypeEnum.float;
-						if (z.value.data[0][0] instanceof Date) d_type = tableau.dataTypeEnum.date;
-						if (typeof z.value.data[0][0] === 'string' || z.value.data[0][0] instanceof String) d_type = tableau.dataTypeEnum.string;
-		
-						z.datatype = d_type;
 						
 						for (var j=0; j<z.value.data.length; j++) {
 							if (resultData[j] == undefined) resultData[j] = {};
