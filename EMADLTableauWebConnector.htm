@@ -48,6 +48,7 @@
 		var doneCallback = function() {};
 		
 		var DL;
+		var queries_data;
 	
 		$( function() {
 				
@@ -109,14 +110,25 @@
 					if (!status.progress) {
 					
 						resultData = [];
-						gridOptions.api.forEachNodeAfterFilterAndSort(function (z, index) {
-							for (var j=0; j<z.data.value.data.length; j++) {
-								if (resultData[j] == undefined) resultData[j] = {};
-								var v = z.data.value.data[j][0];
-								if (v instanceof Date) v = v.toISOString().split('T')[0];
-								resultData[j][z.data.header] = v;
+						for (var i=0; i<queries_data.queries.length; i++) {
+							var z = queries_data.queries[j];
+							
+							if (z.state != 'error') {
+								
+								var d_type = tableau.dataTypeEnum.float;
+								if (z.data[0][0] instanceof Date) d_type = tableau.dataTypeEnum.date;
+								if (typeof z.data[0][0] === 'string' || z.data[0][0] instanceof String) d_type = tableau.dataTypeEnum.string;
+				
+								z.datatype = d_type;
+								
+								for (var j=0; j<z.data.length; j++) {
+									if (resultData[j] == undefined) resultData[j] = {};
+									var v = z.data[j][0];
+									if (v instanceof Date) v = v.toISOString().split('T')[0];
+									resultData[j][z.header] = v;
+								}
 							}
-						});
+						}
 						
 						doneCallback(resultData);
 					}
@@ -131,6 +143,8 @@
 
 			function loadFromConnectionData(connData, silent) {
 				var d = JSON.parse(connData);
+				
+				queries_data = d;
 				
 				$('#freq').val(d.freq);
 				$('#StartDate').val(d.StartDate);
