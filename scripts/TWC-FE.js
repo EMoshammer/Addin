@@ -214,30 +214,6 @@ function setupFE() {
 	
 	// series management
 	
-	report = function(status, r) {
-		var statehint = ''
-		if (r.state == 'error') statehint = r.data;
-		r.statehint = statehint;
-		gridOptions.api.getRowNode(r.gridrow.id).setDataValue('state', r.state);
-		
-		if (!status.progress) {
-		
-			resultData = [];
-			gridOptions.api.forEachNodeAfterFilterAndSort(function (z, index) {
-				for (var j=0; j<z.data.value.data.length; j++) {
-					if (resultData[j] == undefined) resultData[j] = {};
-					var v = z.data.value.data[j][0];
-					if (v instanceof Date) v = v.toISOString().split('T')[0];
-					resultData[j][z.data.header] = v;
-				}
-			});
-			
-			doneCallback(resultData);
-		}
-	}
-	
-	DL = new DataLayer([], report);
-
 	function update_preview() {
 
 		var columnDefsPreview = [];
