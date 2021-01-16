@@ -50,24 +50,7 @@
 		var DL;
 	
 		$( function() {
-		
-			setupFE();
-			
-			loadFromConnectionData(JSON.stringify({
-					freq: 'A',
-					region: ['FR','AT'],
-					//region: [],
-					StartDate: '2010',
-					EndDate: '2020',
-					queries: [
-						{header: 'Country', queryDisplay: '"$a2$"', datatype: tableau.dataTypeEnum.string},
-						{header: 'Date', queryDisplay: 'date', datatype: tableau.dataTypeEnum.date},
-						{header: 'GDP', queryDisplay: 'ECB:AME.A.$a3$.1.0.0.0.OVGD', datatype: tableau.dataTypeEnum.float},
-						//{header: 'GDP', queryDisplay: 'ECB:AME.A.AUT.1.0.0.0.OVGD', datatype: tableau.dataTypeEnum.float},
-						//{header: 'aaa', queryDisplay: 'ECB:AME.A.AUT.1.0.0.0.OVGD+1', datatype: tableau.dataTypeEnum.float},
-					]
-				}));
-		
+				
 			// Create the connector object
 			myConnector = tableau.makeConnector();
 
@@ -90,18 +73,63 @@
 			};
 			
 			myConnector.init = function(done){
-				doneCallback = function() {doneCallback = function () {}; done()};
-				if (tableau.connectionData) {
-					loadFromConnectionData(tableau.connectionData);
+				if (tableau.phase == tableau.phaseEnum.gatherDataPhase) {
+					doneCallback = function() {doneCallback = function () {}; done()};
+					loadFromConnectionData(tableau.connectionData, true);
 				} else {
-					doneCallback();
+				
+					setupFE();
+					
+					loadFromConnectionData(JSON.stringify({
+							freq: 'A',
+							region: ['FR','AT'],
+							//region: [],
+							StartDate: '2010',
+							EndDate: '2020',
+							queries: [
+								{header: 'Country', queryDisplay: '"$a2$"', datatype: tableau.dataTypeEnum.string},
+								{header: 'Date', queryDisplay: 'date', datatype: tableau.dataTypeEnum.date},
+								{header: 'GDP', queryDisplay: 'ECB:AME.A.$a3$.1.0.0.0.OVGD', datatype: tableau.dataTypeEnum.float},
+								//{header: 'GDP', queryDisplay: 'ECB:AME.A.AUT.1.0.0.0.OVGD', datatype: tableau.dataTypeEnum.float},
+								//{header: 'aaa', queryDisplay: 'ECB:AME.A.AUT.1.0.0.0.OVGD+1', datatype: tableau.dataTypeEnum.float},
+							]
+						}), false);
+				
+					done();
 				}
 			};
 
 			tableau.registerConnector(myConnector);
 			
+			
+			report = function(status, r) {
+			
+				if (tableau.phase == tableau.phaseEnum.gatherDataPhase) {
+					
+					if (!status.progress) {
+					
+						resultData = [];
+						gridOptions.api.forEachNodeAfterFilterAndSort(function (z, index) {
+							for (var j=0; j<z.data.value.data.length; j++) {
+								if (resultData[j] == undefined) resultData[j] = {};
+								var v = z.data.value.data[j][0];
+								if (v instanceof Date) v = v.toISOString().split('T')[0];
+								resultData[j][z.data.header] = v;
+							}
+						});
+						
+						doneCallback(resultData);
+					}
 
-			function loadFromConnectionData(connData) {
+				} else {
+					var statehint = ''
+					if (r.state == 'error') statehint = r.data;
+					r.statehint = statehint;
+					gridOptions.api.getRowNode(r.gridrow.id).setDataValue('state', r.state);
+				}
+			}
+
+			function loadFromConnectionData(connData, silent) {
 				var d = JSON.parse(connData);
 				
 				$('#freq').val(d.freq);
@@ -109,18 +137,24 @@
 				$('#EndDate').val(d.EndDate);
 				$('#region').multiselect('select', d.region);
 				
-				gridOptions.api.setRowData([]);
+				if (!silent) gridOptions.api.setRowData([]);
 				
-				DL.env.freq = d.freq;
+				//DL.env.freq = d.freq;
 
-				for (var i=0; i<d.queries.length; i++) {
-					d.queries[i].query = getQuery(d.queries[i].queryDisplay, d.StartDate, d.EndDate, d.region);
-					d.queries[i].gridrow = gridOptions.api.applyTransaction({add: [d.queries[i]]}).add[0];
+				if (d.queries.length) {
+
+					for (var i=0; i<d.queries.length; i++) {
+						d.queries[i].query = getQuery(d.queries[i].queryDisplay, d.StartDate, d.EndDate, d.region);
+						if (!silent) d.queries[i].gridrow = gridOptions.api.applyTransaction({add: [d.queries[i]]}).add[0];
+					}
+					
+					DL = new DataLayer(d.queries, report, {freq: d.freq});
+					
+					//DL.addRequests(d.queries);
+				} else {
+				
+					doneCallback();
 				}
-				
-				DL.addRequests(d.queries);
-				
-				if (d.queries.length == 0) doneCallback();
 			}
 
 		});
