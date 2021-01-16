@@ -90,7 +90,7 @@ function interpreter_wrapper(importFunctionParam) {
 			return error(e.message);
 		}
 
-		var val = interp.value.properties;
+		var val = Object.assign({}, interp.value.properties, interp.value.proto.properties);
 		if (val.type == obj_type.error && val.data == err_type.async) {
 			req.state = 'progress';
 		} else if (val.type == obj_type.error) {
