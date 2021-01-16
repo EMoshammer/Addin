@@ -116,14 +116,14 @@
 							if (z.state != 'error') {
 								
 								var d_type = tableau.dataTypeEnum.float;
-								if (z.data[0][0] instanceof Date) d_type = tableau.dataTypeEnum.date;
-								if (typeof z.data[0][0] === 'string' || z.data[0][0] instanceof String) d_type = tableau.dataTypeEnum.string;
+								if (z.value.data[0][0] instanceof Date) d_type = tableau.dataTypeEnum.date;
+								if (typeof z.value.data[0][0] === 'string' || z.value.data[0][0] instanceof String) d_type = tableau.dataTypeEnum.string;
 				
 								z.datatype = d_type;
 								
-								for (var j=0; j<z.data.length; j++) {
+								for (var j=0; j<z.value.data.length; j++) {
 									if (resultData[j] == undefined) resultData[j] = {};
-									var v = z.data[j][0];
+									var v = z.value.data[j][0];
 									if (v instanceof Date) v = v.toISOString().split('T')[0];
 									resultData[j][z.header] = v;
 								}
