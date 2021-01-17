@@ -147,6 +147,7 @@
 				var d = connData;
 				
 				queries_data = d;
+				renameDuplicates(d.queries);
 				
 				$('#freq').val(d.freq);
 				$('#StartDate').val(d.StartDate);
@@ -158,6 +159,7 @@
 				if (d.queries.length) {
 
 					for (var i=0; i<d.queries.length; i++) {
+										
 						d.queries[i].query = getQuery(d.queries[i].queryDisplay, d.StartDate, d.EndDate, d.region);
 						if (!silent) d.queries[i].gridrow = gridOptions.api.applyTransaction({add: [d.queries[i]]}).add[0];
 					}
@@ -167,6 +169,20 @@
 				} else {
 				
 					doneCallback();
+				}
+			}
+			
+			function renameDuplicates(q) {
+			
+				var dupl = {};
+			
+				for (var i=0; i<q.length; i++) {
+					if (dupl[q[i].header]) {
+						j = 1;
+						while ( dupl[q[i].header + '_' + j] ) { j = j + 1; }
+						q[i].header = q[i].header + '_' + j;
+					}
+					dupl[q[i].header] = 1;
 				}
 			}
 			
