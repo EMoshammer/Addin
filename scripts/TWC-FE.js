@@ -53,6 +53,27 @@ function getQuery(queryDisplay, StartDate, EndDate, country) {
 	}
 	return query;
 }
+
+function addSingle(old, header, queryDisplay) {
+
+	DL.env.freq = $('#freq').val();
+
+	var query = getQuery(queryDisplay, $('#StartDate').val(), $('#EndDate').val(), $('#region').val());
+
+	if (old) {
+		old.header = header;
+		old.queryDisplay = queryDisplay;
+		old.query = query;
+		gridOptions.api.applyTransaction({update: [old]});
+		old.ast = null;
+		DL.updateRequests([old.id]);
+	} else {
+		var q = {header: header, queryDisplay: queryDisplay, query:query, state:'progress'};
+		q.gridrow = gridOptions.api.applyTransaction({add: [q]}).add[0];
+		DL.addRequests([q]);
+	}
+}
+	
 	
 function setupFE() {
 
@@ -242,26 +263,6 @@ function setupFE() {
 		gridOptions.api.forEachNode(function(rowNode, index) {
 			addSingle(rowNode.data, rowNode.data.header, rowNode.data.queryDisplay);
 		});
-	}
-
-	function addSingle(old, header, queryDisplay) {
-
-		DL.env.freq = $('#freq').val();
-
-		var query = getQuery(queryDisplay, $('#StartDate').val(), $('#EndDate').val(), $('#region').val());
-
-		if (old) {
-			old.header = header;
-			old.queryDisplay = queryDisplay;
-			old.query = query;
-			gridOptions.api.applyTransaction({update: [old]});
-			old.ast = null;
-			DL.updateRequests([old.id]);
-		} else {
-			var q = {header: header, queryDisplay: queryDisplay, query:query, state:'progress'};
-			q.gridrow = gridOptions.api.applyTransaction({add: [q]}).add[0];
-			DL.addRequests([q]);
-		}
 	}
 	
 }
