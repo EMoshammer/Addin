@@ -47,6 +47,9 @@ var gridOptionsPreview = {
 };
 
 function getQuery(queryDisplay, StartDate, EndDate, country) {
+	if (!StartDate) StartDate = (new Date()).toISOString().split('T')[0];
+	if (!EndDate) EndDate = (new Date()).toISOString().split('T')[0];
+	
 	var query = 'ts2mat('+queryDisplay+','+StartDate+','+EndDate+')';
 	if (country.length) {
 		query = 'stack('+query+', "country", '+JSON.stringify(country)+')';
@@ -208,12 +211,8 @@ function setupFE() {
 		};
 		
 		gridOptions.api.forEachNode(function(rowNode, index) {
-			var d_type = tableau.dataTypeEnum.float;
-			if (rowNode.data.value.data[0][0] instanceof Date) d_type = tableau.dataTypeEnum.date;
-			if (typeof rowNode.data.value.data[0][0] === 'string' || rowNode.data.value.data[0][0] instanceof String) d_type = tableau.dataTypeEnum.string;
-			
 			if (rowNode.data.state != 'error') {
-				data.queries.push({header: rowNode.data.header, queryDisplay: rowNode.data.queryDisplay, datatype: d_type});
+				data.queries.push({header: rowNode.data.header, queryDisplay: rowNode.data.queryDisplay});
 			}
 		});
 
