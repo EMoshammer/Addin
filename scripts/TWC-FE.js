@@ -50,7 +50,7 @@ function getQuery(queryDisplay, StartDate, EndDate, country) {
 	if (!StartDate) StartDate = (new Date()).toISOString().split('T')[0];
 	if (!EndDate) EndDate = (new Date()).toISOString().split('T')[0];
 	
-	var query = 'ts2mat('+queryDisplay+','+StartDate+','+EndDate+')';
+	var query = 'ts2mat('+queryDisplay+',"'+StartDate+'","'+EndDate+'")';
 	if (country.length) {
 		query = 'stack('+query+', "country", '+JSON.stringify(country)+')';
 	}
