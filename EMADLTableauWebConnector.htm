@@ -120,6 +120,7 @@
 					doneCallback = done;					
 					loadFromConnectionData(JSON.parse(tableau.connectionData), true);
 				} else {
+					alert(tableau.connectionData);
 					setupFE();
 					loadFromConnectionData(default_query, false);
 					done();
