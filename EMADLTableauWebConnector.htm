@@ -121,7 +121,7 @@
 					loadFromConnectionData(JSON.parse(tableau.connectionData), true);
 				} else {
 					setupFE();
-					if (tableau.connectionData) default_query = tableau.connectionData;
+					//if (tableau.connectionData) default_query = tableau.connectionData;
 					loadFromConnectionData(default_query, false);
 					$("#message").html("Data: "+JSON.stringify(tableau.connectionData));
 					done();
