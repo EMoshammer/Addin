@@ -326,7 +326,7 @@ var import_functions = {
 
 		if (obj.toUpperCase() == 'COUNTRY') {
 			var c = countrycodes[iter || 'AT'];
-			for (i in c) {
+			for (var i in c) {
 				if (iter) 	envIter[i] = c[i];
 				else		delete envIter[i];
 			}
@@ -718,7 +718,7 @@ var import_functions = {
 		dur = GETDATA(dur);
 		if (Number.isInteger(+dur)) return dur;
 
-		var a = dur.match(/^(-?\d+)([AQMWBD])$/i);			
+		var a = dur.match(/^(-?\d+)([ASQMWBD])$/i);			
 		if (a) {
 			var freq = env.freq;
 			return +a[1] * FREQFACTOR(freq) / FREQFACTOR(a[2]);
@@ -727,7 +727,7 @@ var import_functions = {
 		}
 	},
 	
-	FREQFACTOR: function (f) { return [1,4,12,52,260,365]['AQMWBD'.indexOf(f.toUpperCase())]; }
+	FREQFACTOR: function (f) { return [1,2,4,12,52,260,365]['ASQMWBD'.indexOf(f.toUpperCase())]; }
 };
 
 var import_list = [

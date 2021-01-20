@@ -5,12 +5,12 @@ function unittest(t, report) {
 
 	var tests_xhr = [
 		//ECB test
-		{query: "stack(ts2mat(ECB:AME.A.$a3$.1.0.0.0.OVGD,2000), '$a3$', ['AUT', 'BEL'])", assert: {"type":"mat","data":[[280.4766,329.6142]]}},
-		{query: "stack(ts2mat(ECB:AME.A.$a3$.1.0.0.0.OVGD,2000), '$country$', ['AT', 'BE'])", assert: {"type":"mat","data":[[280.4766,329.6142]]}},
+		{query: "stack(ts2mat(ECB:AME.A.$a3$.1.0.0.0.OVGD,2000), '$a3$', ['AUT', 'BEL'])", assert: {"type":"mat","data":[[280.4766],[329.6142]]}},
+		{query: "stack(ts2mat(ECB:AME.A.$a3$.1.0.0.0.OVGD,2000), 'country', ['AT', 'BE'])", assert: {"type":"mat","data":[[280.4766],[329.6142]]}},
 		{query: "ts2mat(ECB:AME.A.AUT.1.0.0.0.OVGD,2013)", 				assert: {"type":"mat","data":[[338.5728]]}, env: {freq:'A'} },
 		{query: "ts2mat(ECB:AME.A.AUT.1.0.0.0.OVGD,2013)", 				assert: {"type":"error","data":"xhr: Frequency mismatch!"}, env: {freq:'Q'} },
 		{query: "ts2mat(ECB:BLS.Q.AT.ALL.BC.E.LE.B3.ST.S.DINX,2013)", 	assert: {"type":"mat","data":[[0],[-7.142857074737549],[0],[0]]}, env: {freq:'Q'} },
-		{query: "ts2mat(ECB:CBD.H.AT.11.A.01000.X.1.Z5.0000.Z0Z.Z,2013)", assert: {"type":"mat","data":[[629],[613]]}, env: {freq:'H'} },
+		{query: "ts2mat(ECB:CBD.H.AT.11.A.01000.X.1.Z5.0000.Z0Z.Z,2013)", assert: {"type":"mat","data":[[629],[613]]}, env: {freq:'S'} },
 		{query: "ts2mat(ECB:FM.B.U2.EUR.4F.KR.DFR.CHG,'20190918')", 	assert: {"type":"mat","data":[[-0.1]]}, env: {freq:'B'} },
 		{query: "ts2mat(ECB:BSI.M.AT.N.A.T00.A.1.Z5.0000.Z01.E,'2013M12')", assert: {"type":"mat","data":[[913617]]}, env: {freq:'M'} },
 		{query: "ts2mat(ECB:EXR.D.E5.EUR.EN00.A,'20151231')", 			assert: {"type":"mat","data":[[93.19376096442984]]}, env: {freq:'D'} },
@@ -97,7 +97,7 @@ function unittest(t, report) {
 		tests_general, 
 		test_tsformulas,
 		tests_dateindex,
-		//tests_xhr,
+		tests_xhr,
 		[]);
 	
 	var req = t || tests;

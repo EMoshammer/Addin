@@ -65,6 +65,7 @@ function xhr_loader (requests, rerun) {
 				var freq = series.querySelectorAll('SeriesKey Value#FREQ');
 				if (freq) if (freq[0]) {
 					xhr.freq = freq[0].attributes.value.value.toUpperCase();
+					if (xhr.freq == 'H') xhr.freq = 'S';
 					SETATTR(seriesobj, 'freq', xhr.freq);
 				}
 
