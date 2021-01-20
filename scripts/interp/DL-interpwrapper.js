@@ -1,14 +1,18 @@
+"use strict";
+
 function interpreter_wrapper(importFunctionParam) {
 	
 	var importfunc = [];
 	var interp = {};
 	
+	var globalObject = null;
+	
 
-	function isObj(obj) { return (obj instanceof Interpreter.Object); }
+	function isObj(obj) { return (obj instanceof interp.OBJECT_PROTO.constructor); }
 	function createObj() { return interp.createObjectProto(interp.OBJECT_PROTO); }
 	function cloneObj(obj) { return interp.createObjectProto(obj); }
-	function getPropNative(obj, prop) { return (interp.getProperty(obj || interp.globalObject, prop)); }
-	function setPropNative(obj, prop, val) { interp.setProperty(obj || interp.globalObject, prop, val); return obj; }
+	function getPropNative(obj, prop) { return (interp.getProperty(obj || globalObject, prop)); }
+	function setPropNative(obj, prop, val) { interp.setProperty(obj || globalObject, prop, val); return obj; }
 	function getProp(obj, prop) { return interp.pseudoToNative(getPropNative(obj, prop)); }
 	function setProp(obj, prop, val) { setPropNative(obj, prop, interp.nativeToPseudo(val)); return obj; }
 	
@@ -39,7 +43,7 @@ function interpreter_wrapper(importFunctionParam) {
 	
 	importFunction(importFunctionParam);
 	
-	function evalreq(req, env, probe) {
+	function evalreq(req, env) {
 		
 		if (req.ast) {
 			var ast = req.ast;
@@ -67,19 +71,18 @@ function interpreter_wrapper(importFunctionParam) {
 			if (req.query) req.ast = ast;
 		}
 		
-		interp = new Interpreter(ast);
+		interp = new Interpreter(ast, function(i, g) { globalObject = g; });
 		
 		importfunc.forEach(function (h) {
 			
 			if (h.pseudo) {
 				interp.appendCode(h.func_txt); 
 			} else {
-				interp.setProperty(interp.globalObject, h.name, interp.createNativeFunction(h.func_wrapped));
+				interp.setProperty(globalObject, h.name, interp.createNativeFunction(h.func_wrapped));
 			}
 		});
 		
 		env = Object.assign({}, env);
-		env.probe = probe;
 		setProp(null, 'env', env);
 
 		try {
@@ -90,7 +93,7 @@ function interpreter_wrapper(importFunctionParam) {
 			return error(e.message);
 		}
 
-		var val = Object.assign({}, interp.value.properties, interp.value.proto.properties);
+		var val = {type:GETTYPE(interp.value), data: GETDATA(interp.value)};
 		if (val.type == obj_type.error && val.data == err_type.async) {
 			req.state = 'progress';
 		} else if (val.type == obj_type.error) {
@@ -111,7 +114,7 @@ function interpreter_wrapper(importFunctionParam) {
 			
 			f.name = h.name.toUpperCase();
 			f.pseudo = h.pseudo;
-			f.func = h.func.bind(scope);
+			f.func = h.func;
 			
 			if (f.pseudo) {
 				f.func_txt = h.func.toString();
@@ -120,7 +123,11 @@ function interpreter_wrapper(importFunctionParam) {
 				f.func_wrapped = function() { 
 					var args = Array.prototype.slice.call(arguments);
 					var env = getProp(null, 'env');
-					var r = f.func.apply(Object.assign(this, scope, {env:env}), args);
+					
+					var g = (typeof globalThis !== 'undefined') ? globalThis : self;
+					Object.assign(g, scope, {env:env});
+					
+					var r = f.func.apply(null, args);
 					if (!isObj(r)) {
 						var a = r;
 						r = createObj();

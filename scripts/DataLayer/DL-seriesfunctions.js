@@ -1,3 +1,4 @@
+"use strict";
 
 var obj_type = {
 	scalar : 'scalar',
@@ -27,7 +28,7 @@ var disaggr_type = {
 	none: 'U', // Unknown
 }
 
-err_type = {
+var err_type = {
 	ret_nonmat: 'Transform the final output to a matrix, by calling ts2mat(time series)!',
 	nonmat: 'Requires matrix input!',
 	matwrongdim: 'Matrix dimensions do not match!',
@@ -92,7 +93,7 @@ var import_functions = {
 	},
 
 	EVAL : function (a) {
-		var r = evalreq(GETDATA(a) + "", env);
+		var r = evalreq({query: GETDATA(a) + ""}, env);
 		return (isObj(r)) ? r : LIT(r);
 	},
 
@@ -113,7 +114,7 @@ var import_functions = {
 		var dimT = (dim == 1) ? 2 : 1;
 		
 		for (var i=0; i<arguments.length-1; i++) {
-			m = arguments[i];
+			var m = arguments[i];
 			if (ISERROR(m)) return m;
 			if (GETTYPE(m) != obj_type.mat) return NEW_ERROR(err_type.nonmat, 'concat');
 
@@ -297,29 +298,23 @@ var import_functions = {
 	},
 	
 	DT : function () {
-		if (arguments.length != 1 && arguments.length != 3) return NEW_ERROR(err_type.numargs, 'dt', 'Requires one or three arguments!');
-		
-		if (arguments.length == 1 && arguments[0] instanceof Date) return NEW_DATE(arguments[0]);
-		
-		if (arguments.length == 1 && GETTYPE(arguments[0]) == obj_type.date) return arguments[0];
-		
-		if (arguments.length == 1 && GETTYPE(arguments[0]) == obj_type.text) {
-			return DATE_PARSE(arguments[0]);
-		}
-		
-		if (arguments.length >= 1 && !GETTYPE(arguments[0]) == obj_type.scalar) {
-			return NEW_ERROR(err_type.argtype, 'dt', 'Try dt(\'yyyy-mm-dd\') or dt(yyyy,mm,dd).');
-		}
-		if (arguments.length == 3 && !(GETTYPE(arguments[1]) == obj_type.scalar && GETTYPE(arguments[2]) == obj_type.scalar)) {
-			return NEW_ERROR(err_type.argtype, 'dt', 'Try dt(\'yyyy-mm-dd\') or dt(yyyy,mm,dd).');
-		}
-		
 		if (arguments.length == 1) {
-			return NEW_DATE(new Date(GETDATA(arguments[0]),12,0));
+	
+			if (arguments[0] instanceof Date) return NEW_DATE(arguments[0]);
+			if (GETTYPE(arguments[0]) == obj_type.date) return arguments[0];
+			if (GETTYPE(arguments[0]) == obj_type.text) return DATE_PARSE(arguments[0]);
+			if (GETTYPE(arguments[0]) == obj_type.scalar) return NEW_DATE(new Date(GETDATA(arguments[0]),12,0));
+			return NEW_ERROR(err_type.argtype, 'dt', 'Try dt(\'yyyy-mm-dd\') or dt(yyyy,mm,dd).');
+			
+		} 
+		else if (arguments.length == 3) {
+			if (GETTYPE(arguments[0]) == obj_type.scalar && GETTYPE(arguments[1]) == obj_type.scalar && GETTYPE(arguments[2]) == obj_type.scalar) {
+				return NEW_DATE(new Date(GETDATA(arguments[0]),GETDATA(arguments[1])-1,GETDATA(arguments[2])));
+			}
+			return NEW_ERROR(err_type.argtype, 'dt', 'Try dt(\'yyyy-mm-dd\') or dt(yyyy,mm,dd).');
 		}
-		
-		if (arguments.length == 3) {
-			return NEW_DATE(new Date(GETDATA(arguments[0]),GETDATA(arguments[1])-1,GETDATA(arguments[2])));
+		else {
+			return NEW_ERROR(err_type.numargs, 'dt', 'Requires one or three arguments!');
 		}
 	},
 
@@ -461,6 +456,7 @@ var import_functions = {
 			case 'B': return new Date(((DATE2INDEX_HELPER(env.tsdt_min, 'W') + Math.floor(i/5)) * 7 + 4 + (i%5)) * (24 * 60 * 60 * 1000));
 			case 'D': return new Date(i * (24 * 60 * 60 * 1000) + env.tsdt_min.getTime());
 		}
+		return NEW_ERROR(err_type.freqmismatch, 'index2date');
 	},
 	INDEXFREQCONV: function (index, freqOld, freqNew) {
 		return DATE2INDEX(INDEX2DATE(index, freqOld), freqNew);
@@ -651,7 +647,7 @@ var import_functions = {
 		
 		var r = [];
 		for (var t = 0; (t < ubound) || (t == 0); t++) {
-			v = [];
+			var v = [];
 			for (var i = 0; i < s.length; i++) {
 				if (type[i] == obj_type.ts) {
 					v.push(data[i][t]);
@@ -734,7 +730,7 @@ var import_functions = {
 	FREQFACTOR: function (f) { return [1,4,12,52,260,365]['AQMWBD'.indexOf(f.toUpperCase())]; }
 };
 
-import_list = [
+var import_list = [
 		// pseudo functions
 		// the function is interpreted just-in-time; slow, but needed for calling dynamic code
 	{ name: 'STACK', 	func : import_functions.STACK, pseudo : true },

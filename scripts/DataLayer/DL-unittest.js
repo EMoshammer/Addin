@@ -1,4 +1,4 @@
-
+"use strict";
 
 
 function unittest(t, report) {
@@ -58,9 +58,9 @@ function unittest(t, report) {
 		{query: "format(index2date(date2index(dt('2008-12-31'))),'yyyy-mm-dd')", assert: {"type":"text","data":"2008-12-31"}, env:{freq:'A', tsdt_min: new Date(1900,0,1)} },
 		{query: "format(index2date(date2index(dt('2009-01-01'))),'yyyy-mm-dd')", assert: {"type":"text","data":"2009-12-31"}, env:{freq:'A', tsdt_min: new Date(1900,0,1)} },
 		{query: "format(index2date(date2index(dt('2008-12-30'))),'yyyy-mm-dd')", assert: {"type":"text","data":"2008-12-31"}, env:{freq:'A', tsdt_min: new Date(1900,0,1)} },
-		{query: "format(index2date(date2index(dt('2008-12-31'))),'yyyy-mm-dd')", assert: {"type":"text","data":"2008-12-31"}, env:{freq:'H', tsdt_min: new Date(1900,0,1)} },
-		{query: "format(index2date(date2index(dt('2009-01-01'))),'yyyy-mm-dd')", assert: {"type":"text","data":"2009-06-30"}, env:{freq:'H', tsdt_min: new Date(1900,0,1)} },
-		{query: "format(index2date(date2index(dt('2008-12-30'))),'yyyy-mm-dd')", assert: {"type":"text","data":"2008-12-31"}, env:{freq:'H', tsdt_min: new Date(1900,0,1)} },
+		{query: "format(index2date(date2index(dt('2008-12-31'))),'yyyy-mm-dd')", assert: {"type":"text","data":"2008-12-31"}, env:{freq:'S', tsdt_min: new Date(1900,0,1)} },
+		{query: "format(index2date(date2index(dt('2009-01-01'))),'yyyy-mm-dd')", assert: {"type":"text","data":"2009-06-30"}, env:{freq:'S', tsdt_min: new Date(1900,0,1)} },
+		{query: "format(index2date(date2index(dt('2008-12-30'))),'yyyy-mm-dd')", assert: {"type":"text","data":"2008-12-31"}, env:{freq:'S', tsdt_min: new Date(1900,0,1)} },
 		{query: "format(index2date(date2index(dt('2008-12-31'))),'yyyy-mm-dd')", assert: {"type":"text","data":"2008-12-31"}, env:{freq:'Q', tsdt_min: new Date(1900,0,1)} },
 		{query: "format(index2date(date2index(dt('2009-01-01'))),'yyyy-mm-dd')", assert: {"type":"text","data":"2009-03-31"}, env:{freq:'Q', tsdt_min: new Date(1900,0,1)} },
 		{query: "format(index2date(date2index(dt('2008-12-30'))),'yyyy-mm-dd')", assert: {"type":"text","data":"2008-12-31"}, env:{freq:'Q', tsdt_min: new Date(1900,0,1)} },
@@ -102,7 +102,7 @@ function unittest(t, report) {
 	
 	var req = t || tests;
 
-	report_unittest = function(status, r) {
+	var report_unittest = function(status, r) {
 		if (!status.progress) {
 			var failed = 0;
 			

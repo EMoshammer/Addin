@@ -1,3 +1,4 @@
+"use strict";
 
 function xhr_loader (requests, rerun) {
 
@@ -303,7 +304,7 @@ function xhr_loader (requests, rerun) {
 
 	this.abort = function(req) {
 		for (var r_id in req.xhr) {
-			series_cache[r_id].xhr.abort();
+			if (series_cache[r_id].xhr) series_cache[r_id].xhr.abort();
 		}
 	}
 
