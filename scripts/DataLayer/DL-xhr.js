@@ -1,5 +1,7 @@
 "use strict";
 
+// define an object to handle data requests to external data sources.
+
 function xhr_loader (requests, rerun) {
 
 	var series_cache = {};
@@ -13,6 +15,12 @@ function xhr_loader (requests, rerun) {
 		'DONE': 4 				// The operation is complete.
 	}
 
+	// connectors for different external data sources
+	// init: defines how to recognize the pattern
+	// get: is the get request to send; returns a URL
+	// post: returns the load to send in post request; posturl is the entrypoint
+	// alternatively to get|post, query: performs the full data transmission
+	// onload: processes the received data
 	var xhr_connectors = {
 		TestConnector : {
 			init : function (a) {
@@ -36,16 +44,48 @@ function xhr_loader (requests, rerun) {
 		},
 		DataLayer : {
 			init : function (a) {
-				var r = a.match(/^([\w\d])+\.([\w\d\.]+)$/i);
+				var r = a.match(/^(\w+)\.(\w+(?:@\w+)?)(?:\.(\w*))?(?:\.(\d{8}))?(?:\.([\w@]+))?$/i);
 				if (!r) return null;
-				return { source: 'DataLayer', db: r[1], code: r[2], id: a.toUpperCase(), txt: a };
+				return { source: 'DataLayer', dataset: r[1], series: r[2], region: r[3], revision: r[4], attribute: r[5], id: a.toUpperCase(), txt: a };
 			},
+			posturl : 'https://tst01-jarvis-ema.esm.europa.eu/jarvis/api/jarvis-tsm/1/series/search/bulk',
+			post: function (d) {
+				if (d.revision) d.revision = d.revision.substring(0, 4) + '-' + d.revision.substring(4, 6) + '-' + d.revision.substring(6, 8);	
+				var obj = {
+					id:d.id,
+					dataset: d.dataset,
+					series: d.series,
+					region: d.region,
+					revision: d.revision,
+					attribute: d.attribute,
+				};
+				
+				return JSON.stringify([obj]);
+			},
+			onload: function (xhr, response) {
+				var r = JSON.parse(response);
+				for (var i in r) {
+					if (r[i].id == xhr.id) {
+						var seriesobj = NEW_EMPTY_TS();
+						SETATTR(seriesobj, 'freq', r[i].frequency);
+						SETATTR(seriesobj, 'mag', r[i].magnitude);
+						
+						for (var o in r[i].data) {
+							PUTDATEVALUE(seriesobj, LIT(r[i].data[o].index), r[i].data[o].value, r[i].frequency);
+						}
+						
+						return seriesobj;
+					}
+				}
+				
+				return NEW_ERROR(err_type.xhr, xhr.txt);
+			}			
 		},
 		Haver : {
 			init : function (a) {
 				var r = a.match(/^([\w\d])+@([\w\d]+)$/i);
 				if (!r) return null;
-				return { source: 'Haver', db: r[2], code: r[1], id: a.toUpperCase(), txt: a };
+				return { source: 'DataLayer', dataset: 'Haver', series: a, id: 'HAVER.' + a.toUpperCase(), txt: a };
 			}
 		},
 		ECB : {
@@ -260,19 +300,24 @@ function xhr_loader (requests, rerun) {
 		
 	};
 
+	// loops through connector init functions to find a matching entry
 	function isXHR(a) {
 		for (var x in xhr_connectors) {
-			var r = xhr_connectors[x].init(a);
-			if (r) return r;
+			if (xhr_connectors[x].init) {
+				var r = xhr_connectors[x].init(a);
+				if (r) return r;
+			}
 		}
 		return null;
 	}
 
+	// defines and exposes XHR_PROBE to load an arbitrary identifier
 	this.exportfunc = [{ name: 'XHR_PROBE', func : function (a) {
 		
 		var r = isXHR(a);
 		if (!r) return null;
 		
+		// if the series is found in the cache and the frequency matches, return it
 		r.freq = env.freq;
 		var c = series_cache[r.id];
 		if (c !== undefined) {
@@ -291,6 +336,8 @@ function xhr_loader (requests, rerun) {
 			return cloneObj(c.ts);
 		}
 		
+		// if the series is not found in the cache, create a new entry flagged as UNSENT
+		//	the request will be sent (potentially in bulk) in loadall
 		r.state = xhr_readystate.UNSENT;
 		r.dep = {};
 		r.dep[request_id] = request_id;
@@ -303,60 +350,74 @@ function xhr_loader (requests, rerun) {
 
 	}}];
 
+	// abort the retrieval of a series
 	this.abort = function(req) {
 		for (var r_id in req.xhr) {
 			if (series_cache[r_id].xhr) series_cache[r_id].xhr.abort();
 		}
 	}
+	
+	// rerun the query parser, if all dependencies have been resolved
+	function callback_done(c, ts) {
+		c.state = xhr_readystate.DONE;
+		c.ts = ts;
+		
+		for (var i in c.dep) {
+			delete requests[i].xhr[c.id];
+			if (Object.keys(requests[i].xhr).length === 0) rerun([i]);
+		}
+	}
 
+	// sent a request for a single unsent cache entry
+	function loadsingleunsent(c) {
+
+		var conn = xhr_connectors[c.source];
+		
+		c.xhr = new XMLHttpRequest();
+		
+		c.xhr.onload = function (e) {
+			if (c.xhr.readyState === xhr_readystate.DONE) {
+				if (c.xhr.status === 200) {
+					callback_done(c, conn.onload(c, c.xhr.responseText));
+				} else {
+					callback_done(c, NEW_ERROR(err_type.xhr, c.txt, c.xhr.statusText));
+				}
+			}
+		};
+		c.xhr.onerror = function (e) {
+			callback_done(c, NEW_ERROR(err_type.xhr, c.txt, c.xhr.statusText));
+		};
+		
+		if (conn.get) {
+			c.xhr.open("GET", conn.get(c), true);
+			c.xhr.send(null); 
+		} else if (conn.post && conn.posturl) {
+			c.xhr.open("POST", conn.posturl, true);
+			c.xhr.send(conn.post(c)); 
+		} else {
+			conn.query(c);
+		}
+		
+		c.state = xhr_readystate.LOADING;
+		
+	}
+				
+	// loop through all unsent entries in cache and make the request
 	this.loadall = function() {
 		for (var r_id in series_cache) {
 			var c = series_cache[r_id];
 			if (c.state == xhr_readystate.UNSENT) {
-				
-				(function (c) {
-					
-					var conn = xhr_connectors[c.source];
-					
-					var callback_done = function(ts) {
-						c.state = xhr_readystate.DONE;
-						c.ts = ts;
-						
-						for (var i in c.dep) {
-							delete requests[i].xhr[c.id];
-							if (Object.keys(requests[i].xhr).length === 0) rerun([i]);
-						}
-					}
-					
-					c.xhr = new XMLHttpRequest();
-					
-					c.xhr.onload = function (e) {
-						if (c.xhr.readyState === xhr_readystate.DONE) {
-							if (c.xhr.status === 200) {
-								callback_done(conn.onload(c, c.xhr.responseText));
-							} else {
-								callback_done(NEW_ERROR(err_type.xhr, c.txt, c.xhr.statusText));
-							}
-						}
-					};
-					c.xhr.onerror = function (e) {
-						callback_done(NEW_ERROR(err_type.xhr, c.txt, c.xhr.statusText));
-					};
-					
-					if (conn.get) {
-						c.xhr.open("GET", conn.get(c), true);
-						c.xhr.send(null); 
-					} else {
-						conn.query(c);
-					}
-					
-					c.state = xhr_readystate.LOADING;
-					
-				}) (c);
+				try {
+					loadsingleunsent(c);
+				}
+				catch (e) {
+					callback_done(c, NEW_ERROR(err_type.xhr, c.txt, e.message));
+				}
 			}
 		}
 	}
 	
+	// used to set on what query the interpreter is working to assign correct dependencies
 	this.setRequestId = function (id) {
 		if (!('xhr' in requests[id])) requests[id].xhr = {};
 		request_id = id;

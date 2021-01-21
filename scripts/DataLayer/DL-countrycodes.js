@@ -1,4 +1,6 @@
-countrycodes = {
+//countrycodes used for lookups
+
+var countrycodes = {
 	WO: {'$a2$':'WO', '$country$':'World', '$a2ecb$':'WO', '$a3$':'WLD', '$a3imf$':'WLD', '$ec$':'WO', '$iso$':'', '$imf$':'001', '$imf2$':'', '$fips$':'', '$cur$':'', '$inPROG$':'0', '$inEA$':'0', '$inEU$':'0', '$inOECD$':'0', '$inG20$':'0', '$inIMFadv$':'0', '$isagg$':'1'}, 
 	EA023: {'$a2$':'EA023', '$country$':'Euro area', '$a2ecb$':'EA023', '$a3$':'EA19', '$a3imf$':'EA19', '$ec$':'EA', '$iso$':'', '$imf$':'023', '$imf2$':'', '$fips$':'', '$cur$':'Euros', '$inPROG$':'0', '$inEA$':'0', '$inEU$':'0', '$inOECD$':'0', '$inG20$':'0', '$inIMFadv$':'0', '$isagg$':'1'}, 
 	EA: {'$a2$':'EA', '$country$':'Euro area', '$a2ecb$':'I8', '$a3$':'EA19', '$a3imf$':'EA19', '$ec$':'EA', '$iso$':'', '$imf$':'025', '$imf2$':'', '$fips$':'', '$cur$':'Euros', '$inPROG$':'0', '$inEA$':'0', '$inEU$':'0', '$inOECD$':'0', '$inG20$':'0', '$inIMFadv$':'0', '$isagg$':'1'}, 

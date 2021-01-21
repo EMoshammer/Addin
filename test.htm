@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+
+<html>
+   <head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"> 
+
+	<script src="scripts/interp/browser-polyfill.min.js"></script>
+	<script src="scripts/interp/babel.min.js"></script>
+	<script src="scripts/interp/acorn_interpreter.js"></script>
+	<script src="scripts/other/date.format.js"></script>	
+
+	<script src="scripts/interp/DL-babelplugin.js"></script>
+	<script src="scripts/interp/DL-interpwrapper.js"></script>
+	<script src="scripts/DataLayer/DL-polyfill.js"></script>
+	<script src="scripts/DataLayer/DL-countrycodes.js"></script>
+	<script src="scripts/DataLayer/DL-seriesfunctions.js"></script>
+	<script src="scripts/DataLayer/DL-xhr.js"></script>
+	<script src="scripts/DataLayer/DL-unittest.js"></script>
+	<script src="scripts/DataLayer/DL-main.js"></script>
+
+<script>
+
+window.onload = function(e) { 
+	var req = [
+		{ query: "ts2mat(EWS.Bal_Opening.ES.20Q4,2020)", env:{freq:'M'}},
+	];
+
+	report = function(status, r) {
+		document.getElementById("output").innerHTML = document.getElementById("output").innerHTML + JSON.stringify(status) + '; ' + r.query + ': ' + JSON.stringify(r.value) + '<br>'
+	}
+	
+	var DL = new DataLayer(req, report);
+
+	report = function(txt) {
+		document.getElementById("output").innerHTML = document.getElementById("output").innerHTML + txt + '<br>'
+	}
+
+	unittest(null, report);
+}
+</script>
+
+
+   </head>
+
+<body>
+<div id="output"></div>
+</body>
+
+</html>

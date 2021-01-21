@@ -1,3 +1,4 @@
+// columns of the querylist table
 var columnDefs = [
 	{ field: "header", rowDrag: true, editable: true, tooltipField: 'header', width: 180},
 	{ field: "queryDisplay", editable: true, tooltipField: 'queryDisplay', cellEditor: 'agLargeTextCellEditor', width: 400 },
@@ -12,6 +13,7 @@ var columnDefs = [
 	}
 ];
 
+// function to render status update icons
 function StatusCellRenderer() {}
 StatusCellRenderer.prototype.init = function(params) {
 	this.eGui = document.createElement('span');
@@ -24,28 +26,31 @@ StatusCellRenderer.prototype.init = function(params) {
 };
 StatusCellRenderer.prototype.getGui = function() { return this.eGui; };
 
+//settings for querylist table
 var gridOptions = {
-	rowDragManaged: true,
+	rowDragManaged: true, // allow dragging
 	enableMultiRowDragging: true,
-	rowSelection: 'multiple',
+	rowSelection: 'multiple', //allow multiple selection
 	animateRows: true,
 	defaultColDef: { width: 170 },
 	columnDefs: columnDefs,
 	rowData: [],
-	enableBrowserTooltips: true,
-	components: { statusCellRenderer: StatusCellRenderer },
-	onCellEditingStopped: function (event) {
+	enableBrowserTooltips: true, //enable tooltips
+	components: { statusCellRenderer: StatusCellRenderer }, //render status update icons
+	onCellEditingStopped: function (event) { //when changing a query update the data
 		if (event.colDef.field == 'queryDisplay') {
 			addSingle(event.data, event.data.header, event.data.queryDisplay);
 		}
 	}
 };
 
+//settings for data preview table
 var gridOptionsPreview = {
 	columnDefs: [],
 	rowData: [],
 };
 
+//translate a user-input query to DataLayer Query format; i.e. adding panel parameters
 function getQuery(queryDisplay, StartDate, EndDate, country) {
 	if (!StartDate) StartDate = (new Date()).toISOString().split('T')[0];
 	if (!EndDate) EndDate = (new Date()).toISOString().split('T')[0];
@@ -57,6 +62,8 @@ function getQuery(queryDisplay, StartDate, EndDate, country) {
 	return query;
 }
 
+//incrementally update queries (add a new, or update old query)
+// load the data and update tables
 function addSingle(old, header, queryDisplay) {
 
 	DL.env.freq = $('#freq').val();
@@ -77,7 +84,7 @@ function addSingle(old, header, queryDisplay) {
 	}
 }
 	
-	
+// load the UI features (in tableau interactive mode)
 function setupFE() {
 
 	// ui panel-setting
@@ -257,7 +264,7 @@ function setupFE() {
 
 	}
 
-
+	// update all is needed when changing frequency, dates or countries
 	function updateAll() {
 		gridOptions.api.forEachNode(function(rowNode, index) {
 			addSingle(rowNode.data, rowNode.data.header, rowNode.data.queryDisplay);

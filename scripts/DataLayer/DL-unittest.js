@@ -1,5 +1,8 @@
 "use strict";
 
+// perform a set of automatic unit tests.
+// 	leave t=null to use the standard tests.
+//	provide as report a callback function (e.g. alert or console.log)
 
 function unittest(t, report) {
 

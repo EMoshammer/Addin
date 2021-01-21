@@ -1,5 +1,8 @@
 "use strict";
 
+// supply functions to DL queries
+
+
 var obj_type = {
 	scalar : 'scalar',
 	text : 'text',
@@ -48,6 +51,8 @@ var err_type = {
 
 var import_functions = {
 
+	// concatenate matrices, iterating over a certain object (e.g. obj='country', iter=['AT','BE'])
+	// 	the iterate object is stored in the environment variable and used when interpreting identifiers.
 	STACK : function STACK (func, obj, iter, dim) {
 		
 		if (dim == undefined) dim = 1;
@@ -68,14 +73,18 @@ var import_functions = {
 		return r;
 	},
 
+	// evaluate func() in a specific frequency, and handle the conversion to the parent freqency of the return
 	FREQ : function FREQ (func, freq, aggr, disaggr) {
 		var p = SETENVFREQ(freq, aggr, disaggr);
 		return SETENVFREQ(p.freq, p.aggr, p.disaggr, func());
 	},
 	
+	// catch errors and return null instead
 	CATCH : function CATCH (func) {
 		try {
-			return func();
+			var r = func();
+			if (ISERROR(a)) return NEW_SCALAR(null);
+			return r;
 		}
 		catch(e) {
 			return NEW_SCALAR(null);
@@ -83,7 +92,7 @@ var import_functions = {
 	},
 	
 	
-
+	// ensures the output is a matrix
 	WRAPPER : function (a) {
 	
 		if (ISERROR(a)) return a;
@@ -92,11 +101,13 @@ var import_functions = {
 		return a;
 	},
 
+	// iteratively call the interpreter to evaluate an expression (in the sandbox)
 	EVAL : function (a) {
 		var r = evalreq({query: GETDATA(a) + ""}, env);
 		return (isObj(r)) ? r : LIT(r);
 	},
 
+	// return the size of the matrix
 	SIZE : function (mat, dim) {
 		var m = GETDATA(mat);
 		var d = GETDATA(dim);
@@ -108,6 +119,7 @@ var import_functions = {
 		}
 	},
 
+	// concatenate multiple matrices
 	CONCAT : function() {
 		
 		var dim = GETDATA(arguments[arguments.length-1]);
@@ -132,10 +144,13 @@ var import_functions = {
 
 	},
 
+	// replace text
 	STRREPLACE : function (a, old_code, new_code) {
 		return a.replace(old_code, new_code);
 	},
 	
+	// handling of identifiers. In non-strict mode all identifiers are converted to call 
+	//	this function with the identier converted to string (a => IDENT('a'))
 	IDENT : function (a) {
 		
 		if (env.strict) {
@@ -146,17 +161,18 @@ var import_functions = {
 				a = STRREPLACE(a, iter, env.iter[iter]);
 			}
 			
-			var r = XHR_PROBE(a);
+			var r = XHR_PROBE(a); // check whether the identifier is a request to load external data
 			if (r) return r;
 			
 			if (a.toUpperCase() == 'DATE') return NEW_DATE_TS();
 			if (a.toUpperCase() == 'YEAR') return YEAR(NEW_DATE_TS());
 			
 			return NEW_ERROR(err_type.unknident, 'ident', a);
-			
 		}
 	},
 	
+	// handling of literals (e.g. 'abc' or 123) In non-strict mode all identifiers are converted to call 
+	//	this function with the identier converted to string ('a' => LIT('a'))
 	LIT : function (a) {
 		
 		if (isObj(a)) {
@@ -176,6 +192,7 @@ var import_functions = {
 		}
 	},
 	
+	// create a time series object from a function
 	NEW_TS_FROMFUNC : function (func) {
 		var ind_max = DATE2INDEX(env.tsdt_max);
 		var data = [];
@@ -185,10 +202,11 @@ var import_functions = {
 		return NEW_TS(data);
 	},
 	
+	// create time series objects
 	NEW_DATE_TS : function() { return NEW_TS_FROMFUNC( function (i, dt) { return dt; } ); },
 	NEW_EMPTY_TS : function(i, dt) { return NEW_TS_FROMFUNC( function () { return null; } ); },
 	
-	
+	// create a new object of a specific type
 	NEW_OBJ: function (obj, data) {
 
 		var me = createObj();
@@ -212,6 +230,7 @@ var import_functions = {
 		return NEW_OBJ(obj_type.error, desc);
 	},
 
+	// convert a scalar to a time series, where each data point has the value of the scalar
 	SCALAR2TS : function(a) {
 		if (ISERROR(a)) return a;
 		if (GETTYPE(a) != obj_type.scalar && GETTYPE(a) != obj_type.text && GETTYPE(a) != obj_type.date) return NEW_ERROR(err_type.argtype, 'scalar2ts');
@@ -219,6 +238,7 @@ var import_functions = {
 		return NEW_TS_FROMFUNC( function (i, dt) { return GETDATA(a); } );
 	},
 
+	// convert a time series to a matrix
 	TS2MAT : function (ts, start, end) {
 	
 		if (ISERROR(ts)) return ts;
@@ -241,6 +261,7 @@ var import_functions = {
 		return mat;
 	},
 	
+	// transpose a matrix
 	TRANSPOSE : function(mat) {
 		var data = GETDATA(mat);
 		
@@ -257,6 +278,7 @@ var import_functions = {
 		return mat;
 	},
 	
+	// parse a date in string format
 	DATE_PARSE : function(a, bop) {
 		var a = '' + GETDATA(a);
 		var bop = GETDATA(bop);
@@ -270,7 +292,7 @@ var import_functions = {
 		
 		if (isyyyymmdd) return NEW_DATE(new Date(isyyyymmdd[1],isyyyymmdd[2]-1,isyyyymmdd[3]));
 		
-		if (bop) {
+		if (bop) { // if beginning-of-period is set, the earliest date of a period is returned
 			if (isyyyy) 	return NEW_DATE(new Date(isyyyy[1],0,1));
 			if (isyyyyHh) 	return NEW_DATE(new Date(isyyyyHh[1],(isyyyyHh[2]-1)*6,1));
 			if (isyyyyQq) 	return NEW_DATE(new Date(isyyyyQq[1],(isyyyyQq[2]-1)*3,1));
@@ -297,6 +319,7 @@ var import_functions = {
 		return NEW_ERROR(err_type.parse, 'dt', 'Try yyyy-mm-dd!');
 	},
 	
+	// parse a date (either DT(y,m,d) or with a string parameter parsable by DATE_PARSE
 	DT : function () {
 		if (arguments.length == 1) {
 	
@@ -318,6 +341,7 @@ var import_functions = {
 		}
 	},
 
+	// helper function for STACK
 	setEnvIter: function(obj, iter) {
 
 		obj = GETDATA(obj);
@@ -338,6 +362,7 @@ var import_functions = {
 		setProp(getPropNative(null,'env'), 'iter', envIter);
 	},
 
+	// frequency conversion of a time series
 	TS_CONVFREQ: function (ts, freq_old, freq_new) {
 		if (ISERROR(ts)) return ts;
 		if (GETTYPE(ts) != obj_type.ts) return NEW_ERROR(err_type.nonts,'freq');
@@ -405,6 +430,7 @@ var import_functions = {
 		}
 	},
 
+	// helper function to FREQ
 	setEnvFreq: function (freq, aggr, disaggr, ts) {
 		
 		aggr 	= typeof aggr 	 !== 'undefined' ? aggr 	: aggr_type.none;
@@ -421,6 +447,7 @@ var import_functions = {
 		return TS_CONVFREQ(ts, p_orig.freq, freq);
 	},
 	
+	// set an environment variable
 	setEnv: function (prop, val) {
 		var val_old = env[prop];
 		env[prop] = GETDATA(val).toUpperCase();
@@ -428,6 +455,7 @@ var import_functions = {
 		return val_old;
 	},
 	
+	// functions to convert between index and date
 	DATE2INDEX_HELPER: function (d, freq) {
 		switch (freq.toUpperCase()) {
 			case 'A': return d.getFullYear();
@@ -438,6 +466,7 @@ var import_functions = {
 			case 'B': return Math.floor((d.getTime() / (24 * 60 * 60 * 1000) - (d.getDay()+6)%7 ) / 7)*5 + Math.min((d.getDay()+6)%7, 4);
 			case 'D': return Math.floor(d.getTime() / (24 * 60 * 60 * 1000));
 		}
+		return NEW_ERROR(err_type.freqmismatch, 'date2index_helper');
 	},
 		
 	DATE2INDEX: function (date, freq) {		
@@ -461,6 +490,8 @@ var import_functions = {
 	INDEXFREQCONV: function (index, freqOld, freqNew) {
 		return DATE2INDEX(INDEX2DATE(index, freqOld), freqNew);
 	},
+	
+	// set the value for a specific date of a time series
 	PUTDATEVALUE: function (s, date, value, freq, add) {
 		var data = GETDATA(s);
 		var ind = DATE2INDEX(DT(date), freq);
@@ -473,6 +504,7 @@ var import_functions = {
 		return s;
 	},
 	
+	// a timeseries operation, where each value depends on historic observations of the resulting timeseries
 	LAGEXPR: function(s, op, lag, inv) {
 		
 		if (ISERROR(s)) return s;
@@ -497,6 +529,7 @@ var import_functions = {
 		return s;
 	},
 	
+	// a time series operation, where each value depends on a specific time range
 	RANGEEXPR: function(s, start, dur, op, ignorenull, invert) {
 
 		ignorenull = typeof ignorenull !== 'undefined' ? ignorenull : false;
@@ -559,6 +592,8 @@ var import_functions = {
 		return s;
 	},
 	
+	// perform an operation on one or multiple time series or scalars. 
+	//	the result does only depend on values at the same index across inputs
 	EXPR: function (op) {
 	
 		var s = Array.prototype.slice.call(arguments);
@@ -669,50 +704,7 @@ var import_functions = {
 		}
 	},
 
-	IPCT: 	function (s, lag) { return LAGEXPR(IIF(LAG(cloneObj(s), -PARSEDURATION(s,lag)), OVERLAY(s,0),s), function (t,v) { return (v!=null)?(t||1)*(v/100+1):null; }, lag||1); },
-	INCIF: 	function (s) { return LAGEXPR(s, function (t,v) {return v?(t||0)+1:null}); },
-
-	GETATTR:function (s,attr) { return (!isObj(s)) ? null : getProp(s, attr); },
-	GETDATA:function (s) { return (!isObj(s)) ? s : (getPropNative(s, 'data')); },
-	GETTYPE:function (s) { return GETATTR(s, 'type'); },
-	GETENV: function ()  { return env; },
-	ISERROR:function (s) { return GETTYPE(s) == obj_type.error; },
-	
-	SETATTR:function (s,attr,v) { setProp(s, attr, v); },
-	SETDATA:function (s,v) { setPropNative(s, 'data', (v)); },
-	SETTYPE:function (s,v) { setProp(s, 'type', v); },
-	SETDESC:function (s,v) { setProp(s, 'description', v); },
-	
-	YEAR: 	function (s) { return EXPR('year', s); },
-	
-	PCT: 	function (s, lag) { return EXPR('%', s, LAG(cloneObj(s), lag)); },
-	DIFF: 	function (s, lag) {	return EXPR('-', s, LAG(cloneObj(s), lag));	},
-	CONTR: 	function (s1, s2, lag) { return EXPR('%', DIFF(s1, lag), LAG(s2, lag)); },
-	MOD: 	function (s1, s2) { return EXPR('mod', s1, s2); },
-	ROUND: 	function (s1, s2) { return EXPR('round', s1, s2 || 0); },
-	LN: 	function (s) { return EXPR('log', s, Math.E); },
-	LOG: 	function (s, base) { return EXPR('log', s, base || 10); },
-	FORMAT: function (s, frmt) { return EXPR('format', s, frmt); },
-	IIF: 	function (s1, s2, s3) { return EXPR('iif', s1, s2, s3); },
-	REBASE: function (s, dt) { return EXPR('*', EXPR('/', s, VAL(cloneObj(s),dt)), 100); },
-	MIN:	function () { var args = [].slice.call(arguments); args.unshift('min'); return EXPR.apply(null, args); },
-	MAX:	function () { var args = [].slice.call(arguments); args.unshift('max'); return EXPR.apply(null, args); },
-	OVERLAY:function () { var args = [].slice.call(arguments); args.unshift('overlay'); return EXPR.apply(null, args); },
-	IYTD:	function (s) { return IIF(DIFF(YEAR(NEW_DATE_TS())), s, DIFF(s)); },
-
-	VAL: 	function (s, dt) { return RANGEEXPR(s, DT(dt), 1, function () {}); },
-	LAG: 	function (s, lag) { return RANGEEXPR(s, lag || 1, 1, function () {}); },
-	MSUM: 	function (s, dur, ignorenull) { return RANGEEXPR(s, 0, dur, function (t,v) {return t+v}, ignorenull); },
-	MCOUNT:	function (s, dur) { return RANGEEXPR(s, 0, dur, function (t,v) {return t+1}, true); },
-	MPROD: 	function (s, dur, ignorenull) { return RANGEEXPR(s, 0, dur, function (t,v) {return t*v}, ignorenull); },
-	MMAX: 	function (s, dur, ignorenull) { return RANGEEXPR(s, 0, dur, function (t,v) {return t>v?t:v}, ignorenull); },
-	MMIN: 	function (s, dur, ignorenull) { return RANGEEXPR(s, 0, dur, function (t,v) {return t<v?t:v}, ignorenull); },
-
-	IFERROR: function () { 
-		var args = [].slice.call(arguments);
-		args.unshift('iferror'); return EXPR.apply(null, args); 
-	},
-	
+	// parse a duration. either a number or e.g. '1A' for one year
 	PARSEDURATION: function (s, dur) {
 		if (dur === undefined) return 1;
 		dur = GETDATA(dur);
@@ -726,7 +718,66 @@ var import_functions = {
 			return null;
 		}
 	},
+
+	//get and set attributes
+	GETATTR:function (s,attr) { return (!isObj(s)) ? null : getProp(s, attr); },
+	GETDATA:function (s) { return (!isObj(s)) ? s : (getPropNative(s, 'data')); },
+	GETTYPE:function (s) { return GETATTR(s, 'type'); },
+	GETENV: function ()  { return env; },
+	ISERROR:function (s) { return GETTYPE(s) == obj_type.error; },
 	
+	SETATTR:function (s,attr,v) { setProp(s, attr, v); },
+	SETDATA:function (s,v) { setPropNative(s, 'data', (v)); },
+	SETTYPE:function (s,v) { setProp(s, 'type', v); },
+	SETDESC:function (s,v) { setProp(s, 'description', v); },
+	
+	// timeseries operations
+	// inverse percentage growth
+	IPCT: 	function (s, lag) { return LAGEXPR(IIF(LAG(cloneObj(s), -PARSEDURATION(s,lag)), OVERLAY(s,0),s), function (t,v) { return (v!=null)?(t||1)*(v/100+1):null; }, lag||1); },
+	// increment a counter for consecutive periods s is true, and 0 otherwise
+	INCIF: 	function (s) { return LAGEXPR(s, function (t,v) {return v?(t||0)+1:null}); },
+	// percentage growth
+	PCT: 	function (s, lag) { return EXPR('%', s, LAG(cloneObj(s), lag)); },
+	// first difference
+	DIFF: 	function (s, lag) {	return EXPR('-', s, LAG(cloneObj(s), lag));	},
+	// contribution in growth rate
+	CONTR: 	function (s1, s2, lag) { return EXPR('%', DIFF(s1, lag), LAG(s2, lag)); },
+	// index a time series to 100 at a specific date
+	REBASE: function (s, dt) { return EXPR('*', EXPR('/', s, VAL(cloneObj(s),dt)), 100); },
+	// inverse year-to-date
+	IYTD:	function (s) { return IIF(DIFF(YEAR(NEW_DATE_TS())), s, DIFF(s)); },
+	// return the value at a specific point in time
+	VAL: 	function (s, dt) { return RANGEEXPR(s, DT(dt), 1, function () {}); },
+	// return the leaded or lagged time series
+	LAG: 	function (s, lag) { return RANGEEXPR(s, lag || 1, 1, function () {}); },
+	// moving sum, count, product, max, min
+	MSUM: 	function (s, dur, ignorenull) { return RANGEEXPR(s, 0, dur, function (t,v) {return t+v}, ignorenull); },
+	MCOUNT:	function (s, dur) { return RANGEEXPR(s, 0, dur, function (t,v) {return t+1}, true); },
+	MPROD: 	function (s, dur, ignorenull) { return RANGEEXPR(s, 0, dur, function (t,v) {return t*v}, ignorenull); },
+	MMAX: 	function (s, dur, ignorenull) { return RANGEEXPR(s, 0, dur, function (t,v) {return t>v?t:v}, ignorenull); },
+	MMIN: 	function (s, dur, ignorenull) { return RANGEEXPR(s, 0, dur, function (t,v) {return t<v?t:v}, ignorenull); },
+				
+	//operations on scalars or individual values of time series
+	// year of a date
+	YEAR: 	function (s) { return EXPR('year', s); },
+	// date formatting
+	FORMAT: function (s, frmt) { return EXPR('format', s, frmt); },
+	// if s1 is true return s2, else return s3; executed at each time period
+	IIF: 	function (s1, s2, s3) { return EXPR('iif', s1, s2, s3); },
+	// take the datapoint from the first argument where it is non-null
+	OVERLAY:function () { var args = [].slice.call(arguments); args.unshift('overlay'); return EXPR.apply(null, args); },	
+	// return the first non-error argument
+	IFERROR: function () { var args = [].slice.call(arguments);	args.unshift('iferror'); return EXPR.apply(null, args); },
+	
+	//simple math functions
+	MOD: 	function (s1, s2) { return EXPR('mod', s1, s2); },
+	ROUND: 	function (s1, s2) { return EXPR('round', s1, s2 || 0); },
+	LN: 	function (s) { return EXPR('log', s, Math.E); },
+	LOG: 	function (s, base) { return EXPR('log', s, base || 10); },
+	MIN:	function () { var args = [].slice.call(arguments); args.unshift('min'); return EXPR.apply(null, args); },
+	MAX:	function () { var args = [].slice.call(arguments); args.unshift('max'); return EXPR.apply(null, args); },	
+
+	//a lookup for the observations per year at a frequency
 	FREQFACTOR: function (f) { return [1,2,4,12,52,260,365]['ASQMWBD'.indexOf(f.toUpperCase())]; }
 };
 
@@ -737,7 +788,7 @@ var import_list = [
 	{ name: 'FREQ', 	func : import_functions.FREQ, pseudo : true },
 	{ name: 'CATCH', 	func : import_functions.CATCH, pseudo : true },
 	
-		// mixed functions
+		// native functions
 		// the function is compiled, and can be called both, from pseudo and compiled functions
 	{ name: 'EVAL', 	func : import_functions.EVAL }, 
 	{ name: 'IDENT', 	func : import_functions.IDENT }, 

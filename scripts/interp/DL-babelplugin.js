@@ -1,3 +1,9 @@
+// register a Babel plugin to add convenience conversions (in non-strict mode):
+//	make identifiers case insensitive
+//	allow for simple time series operations (e.g. A+B, where A and B are objects)
+// 	define functions that are executed before its parameters (e.g. CATCH(a) adds a try/catch term before evaluating a)
+//	allow the creation of DL objects for simple identifiers or literals
+
 Babel.registerPlugin('overload',
 	function overload(babel) {
 		var t = babel.types;

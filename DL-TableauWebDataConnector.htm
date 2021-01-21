@@ -34,25 +34,30 @@
 	<script src="scripts/DataLayer/DL-WDCfrontend.js"></script>
 	
 	<script type="text/javascript">
+		//holds the tableau API connector
 		var myConnector = null;
 		
+		//assigned to tableau init callback, triggered after loading all data
 		var doneCallback = function() {};
 		
+		//holds the datalayer and queries
 		var DL;
 		var queries_data;
 		
+		//query that is loaded if no other data is provided
 		var default_query = {
-			freq: 'A',
+			freq: 'Q',
 			region: ['AT'],
 			StartDate: '2010',
 			EndDate: '2020',
 			queries: [
 				{header: 'Country', queryDisplay: '"$a2$"', datatype: tableau.dataTypeEnum.string},
 				{header: 'Date', queryDisplay: 'date', datatype: tableau.dataTypeEnum.date},
-				{header: 'GDP', queryDisplay: 'ECB:AME.A.$a3$.1.0.0.0.OVGD', datatype: tableau.dataTypeEnum.float},
+				{header: 'GDP', queryDisplay: 'PCT(ECB:MNA.Q.Y.$a2$.W2.S1.S1.B.B1GQ._Z._Z._Z.EUR.LR.N, "1Q")', datatype: tableau.dataTypeEnum.float},
 			]
 		};
 		
+		//set to 1 to launch outside tableau interface
 		var isdebug = 0;
 
 		$( function() {
@@ -60,7 +65,7 @@
 			// Create the connector object
 			myConnector = tableau.makeConnector();
 
-			// Define the schema
+			// provide the database schema to tableau
 			myConnector.getSchema = function(schemaCallback) {
 		
 				var res = {id: "Series", alias: "Series Data", columns: []};
@@ -85,7 +90,7 @@
 				schemaCallback([res]);
 			};
 		
-			// Download the data
+			// provide the data to tableau
 			myConnector.getData = function(table, done) {
 	
 				var resultData = [];
@@ -107,6 +112,7 @@
 				done();
 			};
 			
+			// entrypoint from tableau API; if tableau launches interactive phase: setup the frontend; otherwise fetch the data
 			myConnector.init = function(done){
 				if (tableau.phase == tableau.phaseEnum.gatherDataPhase) {
 					doneCallback = done;					
@@ -119,16 +125,18 @@
 				}
 			};
 
+			// tell tableau that connector is ready setup and ready for tableau api to trigger init.
 			tableau.registerConnector(myConnector);
 			
-			
+			// function to be called for any data update in DataLayer query parser
 			report = function(status, r) {
 			
 				if (tableau.phase == tableau.phaseEnum.gatherDataPhase) {
-					
+					//if in gatherdataphase wait for the report-update where no more queries are in progress
 					if (!status.progress) doneCallback();
 
 				} else {
+					//if in the interactive phase, update the status icon of the query
 					var statehint = ''
 					if (r.state == 'error') statehint = r.data;
 					r.statehint = statehint;
@@ -136,6 +144,8 @@
 				}
 			}
 
+			// a function to initially load data in bulk; either in gather data phase or 
+			// in initialisation phase when editing an existing connection.
 			function loadFromConnectionData(connData, silent) {
 				var d = connData;
 				
@@ -165,6 +175,7 @@
 				}
 			}
 			
+			//when assigning the same header multiple times, add a counter to the name
 			function renameDuplicates(q) {
 			
 				var dupl = {};
@@ -179,6 +190,7 @@
 				}
 			}
 			
+			// a debug mode to run outside of tableau interface.
 			if (isdebug) {
 			
 				doneCallback = function(a) {alert(JSON.stringify(a));}
