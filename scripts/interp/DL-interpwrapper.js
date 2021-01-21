@@ -95,7 +95,7 @@ function interpreter_wrapper(importFunctionParam) {
 			}
 		});
 		
-		// feed the interpreter with the environment variable
+		// feed the interpreter with the environment variables
 		env = Object.assign({}, env);
 		setProp(null, 'env', env);
 

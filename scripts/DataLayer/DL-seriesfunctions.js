@@ -54,6 +54,7 @@ var import_functions = {
 	// concatenate matrices, iterating over a certain object (e.g. obj='country', iter=['AT','BE'])
 	// 	the iterate object is stored in the environment variable and used when interpreting identifiers.
 	STACK : function STACK (func, obj, iter, dim) {
+		obj = GETDATA(obj);
 		
 		if (dim == undefined) dim = 1;
 
@@ -65,7 +66,8 @@ var import_functions = {
 
 		for (var i=0; i<iter.length; i++) {
 			SETENVITER(obj,iter[i]);
-			var r = (i==0) ? func() : CONCAT(r, func(), dim);
+			var ret = func();
+			r = (i==0) ? ret : CONCAT(r, ret, dim);
 		}
 		
 		SETENVITER(obj, undefined);
@@ -82,9 +84,7 @@ var import_functions = {
 	// catch errors and return null instead
 	CATCH : function CATCH (func) {
 		try {
-			var r = func();
-			if (ISERROR(a)) return NEW_SCALAR(null);
-			return r;
+			return IFERROR(func(), NEW_SCALAR(null));
 		}
 		catch(e) {
 			return NEW_SCALAR(null);
@@ -640,15 +640,14 @@ var import_functions = {
 			
 			'min': function () { return [].slice.call(arguments).reduce(function(r, v) { return (r > v ? v : r); }); },
 			'max': function () { return [].slice.call(arguments).reduce(function(r, v) { return (r < v ? v : r); }); },
-			'overlay': function () { return [].slice.call(arguments).reduce(function(r, v) { return (r == null ? v : r); }); },
-			'iferror': function () { return [].slice.call(arguments).reduce(function(r, v) { return (ISERROR(r) ? v : r); }); }
+			'overlay': function () { return [].slice.call(arguments).reduce(function(r, v) { return (r == null ? v : r); }); }
 		};
 		
 		if (expr_functions[s.length + op]) 	var fid = s.length + op;
 		else if (expr_functions[op]) 		var fid = op;
 		else return NEW_ERROR(err_type.numargs, op);
 		
-		var allownull = (['3iif','overlay','iferror'].indexOf(fid) >= 0);
+		var allownull = (['3iif','overlay'].indexOf(fid) >= 0);
 		
 		if (allownull)	var f = expr_functions[fid];
 		else 			var f = function () { return isnull.apply(null,arguments) ? null : expr_functions[fid].apply(null,arguments); };
@@ -718,6 +717,14 @@ var import_functions = {
 			return null;
 		}
 	},
+	
+	// return the first non-error argument
+	IFERROR: function() {
+		for (var a in arguments) {
+			if (ISASYNC(arguments[a]) || !ISERROR(arguments[a])) return arguments[a];
+		}
+		return arguments[0];
+	},
 
 	//get and set attributes
 	GETATTR:function (s,attr) { return (!isObj(s)) ? null : getProp(s, attr); },
@@ -725,6 +732,7 @@ var import_functions = {
 	GETTYPE:function (s) { return GETATTR(s, 'type'); },
 	GETENV: function ()  { return env; },
 	ISERROR:function (s) { return GETTYPE(s) == obj_type.error; },
+	ISASYNC:function (s) { return GETTYPE(s) == obj_type.error && GETDATA(s) == err_type.async; },
 	
 	SETATTR:function (s,attr,v) { setProp(s, attr, v); },
 	SETDATA:function (s,v) { setPropNative(s, 'data', (v)); },
@@ -766,8 +774,6 @@ var import_functions = {
 	IIF: 	function (s1, s2, s3) { return EXPR('iif', s1, s2, s3); },
 	// take the datapoint from the first argument where it is non-null
 	OVERLAY:function () { var args = [].slice.call(arguments); args.unshift('overlay'); return EXPR.apply(null, args); },	
-	// return the first non-error argument
-	IFERROR: function () { var args = [].slice.call(arguments);	args.unshift('iferror'); return EXPR.apply(null, args); },
 	
 	//simple math functions
 	MOD: 	function (s1, s2) { return EXPR('mod', s1, s2); },
@@ -794,6 +800,7 @@ var import_list = [
 	{ name: 'IDENT', 	func : import_functions.IDENT }, 
 	{ name: 'LIT', 		func : import_functions.LIT }, 
 	{ name: 'ALERT', 	func : alert }, 
+	{ name: 'CONSOLE', 	func : console.log }, 
 	{ name: 'PCT', 		func : import_functions.PCT }, 
 	{ name: 'IPCT', 	func : import_functions.IPCT }, 
 	{ name: 'DIFF', 	func : import_functions.DIFF }, 
@@ -868,5 +875,6 @@ var import_list = [
 	{ name: 'GETDATA',func : import_functions.GETDATA },
 	{ name: 'GETTYPE',func : import_functions.GETTYPE },
 	{ name: 'ISERROR',func : import_functions.ISERROR },
+	{ name: 'ISASYNC',func : import_functions.ISASYNC },
 
 ];

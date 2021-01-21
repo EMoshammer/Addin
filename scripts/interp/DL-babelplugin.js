@@ -29,7 +29,7 @@ Babel.registerPlugin('overload',
 						path.node.name = path.node.name.toUpperCase();
 					}
 					
-					if (path.listKey == 'arguments' || path.key == 'expression') {
+					if (path.listKey == 'arguments' || path.key == 'expression' || path.key == 'argument') {
 						
 						var i = path.node.name;
 						i = this.file.opts.parserOpts.replescape(i);
