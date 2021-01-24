@@ -70,19 +70,12 @@ Office.onReady(function() {
 		
 		if (r.state == 'success') {
 		
-			if (r.dim == 1) {
-				var i = r.i + r.offset;
-				var j = r.j;
-			} else {
-				var i = r.i;
-				var j = r.j + r.offset;
-			}
-			
+			var v = r.value.data;
     var toInsert = document.createElement("div");
-    toInsert.innerHTML = JSON.stringify(status) + '; ' + r.query + ': ' + JSON.stringify(r.value.data);
+    toInsert.innerHTML = JSON.stringify(status) + '; ' + r.query + ': ' + JSON.stringify(r);
     document.body.appendChild(toInsert);
 			
-			r.sht.getCell(i,j).getResizedRange(r.value.data.length-1, r.value.data[0].length-1).values = r.value.data;
+			r.sht.getCell(r.i,r.j).getResizedRange(v.length-1, v[0].length-1).values = v;
 			r.context.sync();
 		}
 	}
@@ -136,10 +129,18 @@ Office.onReady(function() {
 	var offset = (args[4] === undefined ? 0 : Math.floor(args[4]/10));
         var region = (args[5] === undefined ? null : args[5].split(',') );
         
+	if (dim == 1) {
+		var i = refreshCells[i].i + offset;
+		var j = refreshCells[i].j;
+	} else {
+		var i = refreshCells[i].i;
+		var j = refreshCells[i].j + offset;
+	}
+	      
         var q = 'TS2MAT(' + args[0] + ', ' + dt_start + ', ' + dt_end + ')';
 	if (dim == 2) q = 'TRANSPOSE(' + q + ')';
         if (region) q = 'STACK(' + q + ', "country", ' + JSON.stringify(region) + ', ' + dim + ')';
-        queries.push({i:refreshCells[i].i, j:refreshCells[i].j, offset: offset, dim:dim, txt:refreshCells[i].val, query: q, sht: sheet, context: context});
+        queries.push({i:i, j:j, txt:refreshCells[i].val, query: q, sht: sheet, context: context});
       }
       //document.write(JSON.stringify(queries));
 	DL.addRequests(queries);
