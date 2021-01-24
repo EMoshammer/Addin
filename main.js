@@ -84,7 +84,8 @@ Office.onReady(function() {
 			
 			//var rng = r.sht.getRangeByIndexes(i, j, r.value.data.length, r.value.data[0].length);
 			//rng.values = r.value.data;
-			sht.getRange("C1").values = [[ 1 ]];
+			r.sht.getRange("C1").values = [[ 1 ]];
+			r.context.sync();
 		}
 	}
 	
@@ -147,7 +148,7 @@ Office.onReady(function() {
         var q = 'TS2MAT(' + args[0] + ', ' + dt_start + ', ' + dt_end + ')';
 	if (dim == 2) q = 'TRANSPOSE(' + q + ')';
         if (region) q = 'STACK(' + q + ', "country", ' + JSON.stringify(region) + ', ' + dim + ')';
-        queries.push({i:refreshCells[i].i, j:refreshCells[i].j, offset: offset, dim:dim, txt:refreshCells[i].val, query: q, sht: sheet});
+        queries.push({i:refreshCells[i].i, j:refreshCells[i].j, offset: offset, dim:dim, txt:refreshCells[i].val, query: q, sht: sheet, context: context});
       }
       //document.write(JSON.stringify(queries));
 	DL.addRequests(queries);
