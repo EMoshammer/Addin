@@ -82,8 +82,8 @@ Office.onReady(function() {
 				var j = r.j + r.offset;
 			}
 			
-			//var rng = r.sht.getRangeByIndexes(i, j, r.value.data.length, r.value.data[0].length);
-			//rng.values = r.value.data;
+			var rng = r.sht.getRangeByIndexes(i, j, r.value.data.length, r.value.data[0].length);
+			rng.values = r.value.data;
 			r.sht.getRange("C1").values = [[ 1 ]];
 			r.context.sync();
 		}
