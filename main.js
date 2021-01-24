@@ -91,6 +91,7 @@ Office.onReady(function() {
       }
 
     })
+    .then(function () { LoadNextParam(refreshCells, 5);}).then(context.sync)
     .then(function () { LoadNextParam(refreshCells, 4);}).then(context.sync)
     .then(function () { LoadNextParam(refreshCells, 3);}).then(context.sync)
     .then(function () { LoadNextParam(refreshCells, 2);}).then(context.sync)
