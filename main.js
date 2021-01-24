@@ -7,7 +7,7 @@ var DL = null;
 
 function ExcelDateToJSDate(date) {
   if (date < 3000) return date;
-  return new Date(Math.round((date - 25569)*86400*1000));
+  return (new Date(Math.round((date - 25569)*86400*1000))).toISOString().split('T')[0];
 }
 
 function ParseArguments(expr) {
