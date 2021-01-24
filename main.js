@@ -69,7 +69,7 @@ Office.onReady(function() {
   
 	report = function(status, r) {
     var toInsert = document.createElement("div");
-    toInsert.innerHTML = JSON.stringify(status) + '; ' + r.query + ': ' + JSON.stringify(r);
+    toInsert.innerHTML = JSON.stringify(status) + '; ' + r.query + ': ' + JSON.stringify(r.value);
     document.body.appendChild(toInsert);
 		
 		if (r.state == 'success') {
@@ -82,9 +82,9 @@ Office.onReady(function() {
 				var j = r.j + r.offset;
 			}
 			
-			var rng = r.sht.getRangeByIndexes(i, j, r.value.data.length, r.value.data[0].length);
-			rng.values = r.value.data;
-			sheet.getRange("C1").values = [[ 1 ]];
+			//var rng = r.sht.getRangeByIndexes(i, j, r.value.data.length, r.value.data[0].length);
+			//rng.values = r.value.data;
+			sht.getRange("C1").values = [[ 1 ]];
 		}
 	}
 	
