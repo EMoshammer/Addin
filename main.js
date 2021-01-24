@@ -82,7 +82,7 @@ Office.onReady(function() {
 				var j = r.j + r.offset;
 			}
 			
-			var rng = r.sht.getRangeByIndexes(i, j, r.value.data.length, r.value.data[0].length);
+			//var rng = r.sht.getRangeByIndexes(i, j, r.value.data.length, r.value.data[0].length);
 			var rng = r.sht.getRangeByIndexes(6, 6, 1, 1);
 			//rng.values = r.value.data;
 			rng.values = [[ 5 ]];
