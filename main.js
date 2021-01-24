@@ -1,7 +1,6 @@
 
 //https://github.com/handsontable/formula-parser
 //https://github.com/formulajs/formulajs
-//https://stackoverflow.com/questions/64464114/excel-function-parsing-in-office-js
 
 var DL = null;
 
@@ -80,14 +79,10 @@ Office.onReady(function() {
 			}
 			
     var toInsert = document.createElement("div");
-    toInsert.innerHTML = JSON.stringify(status) + '; ' + r.query + ': ' + JSON.stringify(r.value.data) + ' : ' + r.value.data.length + ' : ' + r.value.data[0].length;
+    toInsert.innerHTML = JSON.stringify(status) + '; ' + r.query + ': ' + JSON.stringify(r.value.data);
     document.body.appendChild(toInsert);
 			
-			//var rng = r.sht.getRangeByIndexes(i, j, r.value.data.length, r.value.data[0].length);
 			r.sht.getCell(i,j).getResizedRange(r.value.data.length-1, r.value.data[0].length-1).values = r.value.data;
-			//rng.values = r.value.data;
-
-			r.sht.getRange("C1").values = [[ 4 ]];
 			r.context.sync();
 		}
 	}
@@ -100,13 +95,6 @@ Office.onReady(function() {
     
     var rng = sheet.getUsedRange();
     rng.load("formulas");
-    
-    sheet.getRange("A1").values = [[ 1 ]];
-    sheet.getRange("A2").values = [[ 2 ]];
-    sheet.getRange("A3").values = [[ 4 ]];
-    sheet.getRange("B1").values = [[ 5 ]];
-    sheet.getRange("B2").values = [[ 2 ]];
-
     var refreshCells = new Array();
     
     
@@ -144,7 +132,7 @@ Office.onReady(function() {
         var freq = (args[1] === undefined ? 'A' : args[1]);
         var dt_start = (args[2] === undefined ? '2000' : ExcelDateToJSDate(args[2]));
         var dt_end = (args[3] === undefined ? '2020' : ExcelDateToJSDate(args[3]));
-	var dim = (args[4] === undefined ? 1 : (args[4] % 1 == 1 ? 2 : 1));
+	var dim = (args[4] === undefined ? 1 : (args[4] % 10 == 1 ? 2 : 1));
 	var offset = (args[4] === undefined ? 0 : Math.floor(args[4]/10));
         var region = (args[5] === undefined ? null : args[5].split(',') );
         
