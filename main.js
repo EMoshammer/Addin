@@ -83,10 +83,10 @@ Office.onReady(function() {
 			}
 			
 			//var rng = r.sht.getRangeByIndexes(i, j, r.value.data.length, r.value.data[0].length);
-			r.sht.getCell(i,j).values = [[ 5 ]]; //.getResizedRange(1,1);
+			r.sht.getCell(i,j).getResizedRange(r.value.data.length, r.value.data[0].length).values = r.value.data;
 			//rng.values = r.value.data;
 
-			r.sht.getRange("C1").values = [[ 3 ]];
+			r.sht.getRange("C1").values = [[ 4 ]];
 			r.context.sync();
 		}
 	}
