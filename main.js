@@ -3,6 +3,13 @@
 //https://github.com/formulajs/formulajs
 //https://stackoverflow.com/questions/64464114/excel-function-parsing-in-office-js
 
+var DL = null;
+
+function ExcelDateToJSDate(date) {
+  if (date < 3000) return date;
+  return new Date(Math.round((date - 25569)*86400*1000));
+}
+
 function ParseArguments(expr) {
 
   args = [];
@@ -60,6 +67,14 @@ function LoadNextParam(refreshCells, iter) {
   
 Office.onReady(function() {
   
+	report = function(status, r) {
+    var toInsert = document.createElement("div");
+    toInsert.innerHTML = JSON.stringify(status) + '; ' + r.query + ': ' + JSON.stringify(r.value);
+    document.body.appendChild(toInsert);
+	}
+	
+	var DL = new DataLayer([], report);
+  
   Excel.run(function (context) {
     
     var sheet = context.workbook.worksheets.getActiveWorksheet();
@@ -100,7 +115,21 @@ Office.onReady(function() {
     .then(function () { LoadNextParam(refreshCells, -1);})
     .then(function () {
       
-      document.write(JSON.stringify(refreshCells, null, 4));
+      var queries = []
+      for (var i; i<refreshCells.length; i++) {
+        var args = refreshCells[i].args;
+        if (args.length == 0) continue;
+        
+        var freq = (args[1] === undefined ? 'A' : args[1]);
+        var dt_start = (args[2] === undefined ? '2000' : ExcelDateToJSDate(args[2]));
+        var dt_end = (args[3] === undefined ? '2020' : ExcelDateToJSDate(args[3]));
+        var region = (args[5] === undefined ? null : args[5].split(','); );
+        
+        var q = 'TS2MAT(' + args[0] + ', ' + dt_start + ', ' + dt_end + ')';
+        if (region) q = 'STACK(' + q + ', "country", ' + JSON.stringify(region) + ', 1)';
+        queries.push({i:refreshCells[i].i, j:refreshCells[i].j, txt:refreshCells[i].val, query: q});
+      }
+      document.write(JSON.stringify(queries));
     
     });
     
