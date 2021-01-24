@@ -142,7 +142,7 @@ Office.onReady(function() {
         if (region) q = 'STACK(' + q + ', "country", ' + JSON.stringify(region) + ', ' + dim + ')';
         queries.push({i:i, j:j, txt:refreshCells[i].val, query: q, sht: sheet, context: context});
       }
-      //document.write(JSON.stringify(queries));
+      document.write(JSON.stringify(queries));
 	DL.addRequests(queries);
     
     });
