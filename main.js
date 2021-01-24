@@ -72,7 +72,7 @@ Office.onReady(function() {
 		
 			var v = r.value.data;
     var toInsert = document.createElement("div");
-    toInsert.innerHTML = JSON.stringify(status) + '; ' + r.query + ': ' + JSON.stringify(r);
+    toInsert.innerHTML = JSON.stringify(status) + '; ' + r.query + ': ' + JSON.stringify(v);
     document.body.appendChild(toInsert);
 			
 			r.sht.getCell(r.i,r.j).getResizedRange(v.length-1, v[0].length-1).values = v;
