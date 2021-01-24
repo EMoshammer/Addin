@@ -68,9 +68,6 @@ function LoadNextParam(refreshCells, iter) {
 Office.onReady(function() {
   
 	report = function(status, r) {
-    var toInsert = document.createElement("div");
-    toInsert.innerHTML = JSON.stringify(status) + '; ' + r.query + ': ' + JSON.stringify(r.value);
-    document.body.appendChild(toInsert);
 		
 		if (r.state == 'success') {
 		
@@ -82,8 +79,12 @@ Office.onReady(function() {
 				var j = r.j + r.offset;
 			}
 			
+    var toInsert = document.createElement("div");
+    toInsert.innerHTML = JSON.stringify(status) + '; ' + r.query + ': ' + JSON.stringify(r.value.data) + ' : ' + r.value.data.length + ' : ' + r.value.data[0].length;
+    document.body.appendChild(toInsert);
+			
 			//var rng = r.sht.getRangeByIndexes(i, j, r.value.data.length, r.value.data[0].length);
-			r.sht.getCell(i,j).getResizedRange(r.value.data.length, r.value.data[0].length).values = [[ 4 ]];
+			r.sht.getCell(i,j).values = r.value.data; //.getResizedRange(r.value.data.length, r.value.data[0].length)
 			//rng.values = r.value.data;
 
 			r.sht.getRange("C1").values = [[ 4 ]];
