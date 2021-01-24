@@ -117,7 +117,7 @@ Office.onReady(function() {
       
       var queries = [];
 	
-      for (var i; i<refreshCells.length; i++) {
+      for (var i=0; i<refreshCells.length; i++) {
 	document.write(JSON.stringify(refreshCells[i]));
         var args = refreshCells[i].args;
         if (args.length == 0) continue;
