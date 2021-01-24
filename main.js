@@ -69,8 +69,26 @@ Office.onReady(function() {
   
 	report = function(status, r) {
     var toInsert = document.createElement("div");
-    toInsert.innerHTML = JSON.stringify(status) + '; ' + r.query + ': ' + JSON.stringify(r.value);
+    toInsert.innerHTML = JSON.stringify(status) + '; ' + r.query + ': ' + JSON.stringify(r);
     document.body.appendChild(toInsert);
+		
+		if (r.state == 'success') {
+		
+			if (r.dim == 1) {
+				var i = r.i + r.offset;
+				var j = r.j;
+				var i_cnt = r.value.length;
+				var j_cnt = 1;
+			} else {
+				var i = r.i;
+				var j = r.j + r.offset;
+				var i_cnt = 1;
+				var j_cnt = r.value.length;
+			}
+			
+			var rng = r.sht.getRangeByIndexes(i, j, i_cnt, j_cnt);
+			rng.values = r.value;
+		}
 	}
 	
 	var DL = new DataLayer([], report);
@@ -125,11 +143,14 @@ Office.onReady(function() {
         var freq = (args[1] === undefined ? 'A' : args[1]);
         var dt_start = (args[2] === undefined ? '2000' : ExcelDateToJSDate(args[2]));
         var dt_end = (args[3] === undefined ? '2020' : ExcelDateToJSDate(args[3]));
+	var dim = (args[4] === undefined ? 1 : (args[4] % 1 == 1 ? 2 : 1));
+	var offset = (args[4] === undefined ? 0 : Math.floor(args[4]/10));
         var region = (args[5] === undefined ? null : args[5].split(',') );
         
         var q = 'TS2MAT(' + args[0] + ', ' + dt_start + ', ' + dt_end + ')';
-        if (region) q = 'STACK(' + q + ', "country", ' + JSON.stringify(region) + ', 1)';
-        queries.push({i:refreshCells[i].i, j:refreshCells[i].j, txt:refreshCells[i].val, query: q});
+	if (dim == 2) q = 'TRANSPOSE(' + q + ')';
+        if (region) q = 'STACK(' + q + ', "country", ' + JSON.stringify(region) + ', ' + dim + ')';
+        queries.push({i:refreshCells[i].i, j:refreshCells[i].j, offset: offset, txt:refreshCells[i].val, query: q, sht: sheet});
       }
       //document.write(JSON.stringify(queries));
 	DL.addRequests(queries);
