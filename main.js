@@ -75,7 +75,7 @@ Office.onReady(function() {
     toInsert.innerHTML = JSON.stringify(status) + '; ' + r.query + ': ' + JSON.stringify(v);
     document.body.appendChild(toInsert);
 			
-			r.sht.getCell(r.i,r.j).getResizedRange(v.length-1, v[0].length-1).values = v;
+			r.sht.getCell(r.target[0],r.target[1]).getResizedRange(v.length-1, v[0].length-1).values = v;
 			r.context.sync();
 		}
 	}
@@ -128,21 +128,22 @@ Office.onReady(function() {
 	var dim = (args[4] === undefined ? 1 : (args[4] % 10 == 1 ? 2 : 1));
 	var offset = (args[4] === undefined ? 0 : Math.floor(args[4]/10));
         var region = (args[5] === undefined ? null : args[5].split(',') );
-        
+        var target = [];
+	      
 	if (dim == 1) {
-		var i = refreshCells[i].i + offset;
-		var j = refreshCells[i].j;
+		target[0] = refreshCells[i].i + offset;
+		target[1] = refreshCells[i].j;
 	} else {
-		var i = refreshCells[i].i;
-		var j = refreshCells[i].j + offset;
+		target[0] = refreshCells[i].i;
+		target[1] = refreshCells[i].j + offset;
 	}
 	      
         var q = 'TS2MAT(' + args[0] + ', ' + dt_start + ', ' + dt_end + ')';
 	if (dim == 2) q = 'TRANSPOSE(' + q + ')';
         if (region) q = 'STACK(' + q + ', "country", ' + JSON.stringify(region) + ', ' + dim + ')';
-        queries.push({i:i, j:j, txt:refreshCells[i].val, query: q, sht: sheet, context: context});
+        queries.push({target:target, txt:refreshCells[i].val, query: q, sht: sheet, context: context});
       }
-      document.write(JSON.stringify(queries));
+      //document.write(JSON.stringify(queries));
 	DL.addRequests(queries);
     
     });
