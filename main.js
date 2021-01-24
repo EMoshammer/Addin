@@ -84,7 +84,7 @@ Office.onReady(function() {
     document.body.appendChild(toInsert);
 			
 			//var rng = r.sht.getRangeByIndexes(i, j, r.value.data.length, r.value.data[0].length);
-			r.sht.getCell(i,j).values = r.value.data; //.getResizedRange(r.value.data.length, r.value.data[0].length)
+			r.sht.getCell(i,j).getResizedRange(r.value.data.length-1, r.value.data[0].length-1).values = r.value.data;
 			//rng.values = r.value.data;
 
 			r.sht.getRange("C1").values = [[ 4 ]];
