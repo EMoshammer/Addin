@@ -77,16 +77,12 @@ Office.onReady(function() {
 			if (r.dim == 1) {
 				var i = r.i + r.offset;
 				var j = r.j;
-				var i_cnt = r.value.length;
-				var j_cnt = 1;
 			} else {
 				var i = r.i;
 				var j = r.j + r.offset;
-				var i_cnt = 1;
-				var j_cnt = r.value.length;
 			}
 			
-			var rng = r.sht.getRangeByIndexes(i, j, i_cnt, j_cnt);
+			var rng = r.sht.getRangeByIndexes(i, j, r.value.data.length, r.value.data[0].length);
 			rng.values = r.value;
 		}
 	}
@@ -150,7 +146,7 @@ Office.onReady(function() {
         var q = 'TS2MAT(' + args[0] + ', ' + dt_start + ', ' + dt_end + ')';
 	if (dim == 2) q = 'TRANSPOSE(' + q + ')';
         if (region) q = 'STACK(' + q + ', "country", ' + JSON.stringify(region) + ', ' + dim + ')';
-        queries.push({i:refreshCells[i].i, j:refreshCells[i].j, offset: offset, txt:refreshCells[i].val, query: q, sht: sheet});
+        queries.push({i:refreshCells[i].i, j:refreshCells[i].j, offset: offset, dim:dim, txt:refreshCells[i].val, query: q, sht: sheet});
       }
       //document.write(JSON.stringify(queries));
 	DL.addRequests(queries);
