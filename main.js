@@ -123,7 +123,7 @@ Office.onReady(function() {
         var freq = (args[1] === undefined ? 'A' : args[1]);
         var dt_start = (args[2] === undefined ? '2000' : ExcelDateToJSDate(args[2]));
         var dt_end = (args[3] === undefined ? '2020' : ExcelDateToJSDate(args[3]));
-        var region = (args[5] === undefined ? null : args[5].split(','); );
+        var region = (args[5] === undefined ? null : args[5].split(',') );
         
         var q = 'TS2MAT(' + args[0] + ', ' + dt_start + ', ' + dt_end + ')';
         if (region) q = 'STACK(' + q + ', "country", ' + JSON.stringify(region) + ', 1)';
