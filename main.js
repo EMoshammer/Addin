@@ -118,7 +118,7 @@ Office.onReady(function() {
       var queries = [];
 	
       for (var i=0; i<refreshCells.length; i++) {
-	document.write(JSON.stringify(refreshCells[i]));
+	//document.write(JSON.stringify(refreshCells[i]));
         var args = refreshCells[i].args;
         if (args.length == 0) continue;
         
@@ -131,7 +131,7 @@ Office.onReady(function() {
         if (region) q = 'STACK(' + q + ', "country", ' + JSON.stringify(region) + ', 1)';
         queries.push({i:refreshCells[i].i, j:refreshCells[i].j, txt:refreshCells[i].val, query: q});
       }
-      //document.write(JSON.stringify(queries));
+      document.write(JSON.stringify(queries));
     
     });
     
