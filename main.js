@@ -83,7 +83,7 @@ Office.onReady(function() {
 			}
 			
 			//var rng = r.sht.getRangeByIndexes(i, j, r.value.data.length, r.value.data[0].length);
-			var rng = r.sht.getRangeByIndexes(6, 6, 1, 1);
+			var rng = r.sht.getCell(6,6).getResizedRange(1,1);
 			//rng.values = r.value.data;
 			rng.values = [[ 5 ]];
 			r.sht.getRange("C1").values = [[ 2 ]];
