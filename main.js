@@ -83,7 +83,8 @@ Office.onReady(function() {
 			}
 			
 			var rng = r.sht.getRangeByIndexes(i, j, r.value.data.length, r.value.data[0].length);
-			rng.values = r.value;
+			rng.values = r.value.data;
+			sheet.getRange("C1").values = [[ 1 ]];
 		}
 	}
 	
