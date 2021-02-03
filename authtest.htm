@@ -1,0 +1,32 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script>
+
+$(function(){
+
+
+var getUrlParameter = function getUrlParameter(url,param) {
+    var sPageURL = url.substr(url.indexOf('#')+1),
+        sURLVariables = sPageURL.split('&'),
+        sParameterName,
+        i;
+
+    for (i = 0; i < sURLVariables.length; i++) {
+        sParameterName = sURLVariables[i].split('=');
+
+        if (sParameterName[0] === param) {
+            return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+        }
+    }
+};
+
+$('<iframe id="auth" src="referrer.htm"></iframe>').appendTo('body')
+$("#auth").on("load", function() {
+    console.log(document.getElementById("auth").contentWindow.location.href);
+});
+
+
+});
+
+</script>
+
