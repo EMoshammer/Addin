@@ -1,6 +1,4 @@
-<html>
-    <head>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
 <script>
 
@@ -24,7 +22,11 @@ var getUrlParameter = function getUrlParameter(url,param) {
 
 $('<iframe id="auth" src="referrer.htm"></iframe>').appendTo('body')
 $("#auth").on("load", function() {
-    console.log(document.getElementById("auth").contentWindow.location.href);
+	var ref_target_url = $("#auth").contentWindow.location.href;
+	if (ref_target_url.includes("referrer_target.htm")) {
+		console.log(getUrlParameter(ref_target_url, 'access_token'));
+	};
+
 });
 
 
@@ -32,5 +34,3 @@ $("#auth").on("load", function() {
 
 </script>
 
-    </head>
-</html>
