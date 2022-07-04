@@ -1,49 +1,35 @@
-<!DOCTYPE html>
-
-<html>
-   <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge"> 
-
-	<script src="scripts/interp/browser-polyfill.min.js"></script>
-	<script src="scripts/interp/babel.min.js"></script>
-	<script src="scripts/interp/acorn_interpreter.js"></script>
-	<script src="scripts/other/date.format.js"></script>	
-
-	<script src="scripts/interp/DL-babelplugin.js"></script>
-	<script src="scripts/interp/DL-interpwrapper.js"></script>
-	<script src="scripts/DataLayer/DL-polyfill.js"></script>
-	<script src="scripts/DataLayer/DL-countrycodes.js"></script>
-	<script src="scripts/DataLayer/DL-seriesfunctions.js"></script>
-	<script src="scripts/DataLayer/DL-xhr.js"></script>
-	<script src="scripts/DataLayer/DL-unittest.js"></script>
-	<script src="scripts/DataLayer/DL-main.js"></script>
 
 <script>
 
-window.onload = function(e) { 
-	var req = [
-		{ query: "ts2mat(EWS.Bal_Opening.ES.20Q4,2020)", env:{freq:'M'}},
-	];
+window.onload = function(){
 
-	report = function(status, r) {
-		document.getElementById("output").innerHTML = document.getElementById("output").innerHTML + JSON.stringify(status) + '; ' + r.query + ': ' + JSON.stringify(r.value) + '<br>'
-	}
+    const iframe = document.createElement('iframe');
+    iframe.src =      'https://sts-uat.esm.europa.eu/adfs/oauth2/authorize/wia?redirect_uri=https://uat01-jarvis-ema.esm.europa.eu/ui/callback?&client_id=9192e0d7-827d-41aa-af03-f99c79451f23&scope=openid&response_mode=fragment&response_type=id_token+token&nonce=1612342610&client-request-id=4add5f40-e564-4305-c664-0080000000f4';
 	
-	var DL = new DataLayer(req, report);
-
-	report = function(txt) {
-		document.getElementById("output").innerHTML = document.getElementById("output").innerHTML + txt + '<br>'
-	}
-
-	unittest(null, report);
-}
+    //iframe.src =      'https://sts.esm.europa.eu/adfs/oauth2/authorize/wia?redirect_uri=https://jarvis-ema.esm.europa.eu/ui/callback?&client_id=9192e0d7-827d-41aa-af03-f99c79451f23&scope=openid&response_mode=fragment&response_type=id_token+token&nonce=1612342610&client-request-id=4add5f40-e564-4305-c664-0080000000f4';
+	
+    iframe.style.display = 'none';
+    iframe.addEventListener(
+      'load',
+      function (e) {
+        try {
+          var targetElement = e.path[0] || e.target || e.srcElement;
+          var ref_target_url = targetElement.contentWindow.location.href;
+          if (ref_target_url.includes('access_token=')) {
+            var token = ref_target_url.substr(
+              ref_target_url.indexOf('access_token=') + 'access_token='.length
+            );
+            adfsToken = token.substr(0, token.indexOf('&'));
+            adfsTokenExpiry = JSON.parse(atob(token.split('.')[1])).exp;
+          }
+		  
+		  alert(adfsToken);
+        } catch (err) {
+          alert(err);
+        }
+      },
+      false
+    );
+    document.body.appendChild(iframe);
+};
 </script>
-
-
-   </head>
-
-<body>
-<div id="output"></div>
-</body>
-
-</html>
